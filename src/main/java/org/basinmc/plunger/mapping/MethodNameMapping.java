@@ -24,6 +24,7 @@ import java.util.Optional;
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
+@FunctionalInterface
 public interface MethodNameMapping {
 
   /**
@@ -55,7 +56,11 @@ public interface MethodNameMapping {
    * "execute").</p>
    *
    * @return an inverse mapping.
+   * @throws UnsupportedOperationException when the operation is not supported by this
+   * implementation.
    */
   @NonNull
-  MethodNameMapping invert();
+  default MethodNameMapping invert() {
+    throw new UnsupportedOperationException();
+  }
 }

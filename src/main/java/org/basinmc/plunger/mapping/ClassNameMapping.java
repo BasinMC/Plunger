@@ -24,6 +24,7 @@ import java.util.Optional;
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
+@FunctionalInterface
 public interface ClassNameMapping {
 
   /**
@@ -51,7 +52,11 @@ public interface ClassNameMapping {
    * contain a mapping from "A" to "org/basinmc/plunger/Class").</p>
    *
    * @return an inverse of this mapping.
+   * @throws UnsupportedOperationException when the operation is not supported by this
+   * implementation.
    */
   @NonNull
-  ClassNameMapping invert();
+  default ClassNameMapping invert() {
+    throw new UnsupportedOperationException();
+  }
 }

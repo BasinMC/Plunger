@@ -30,5 +30,7 @@ public interface NameMapping extends ClassNameMapping, FieldNameMapping, MethodN
    */
   @NonNull
   @Override
-  NameMapping invert();
+  default NameMapping invert() {
+    throw new UnsupportedOperationException();
+  }
 }

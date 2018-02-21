@@ -24,6 +24,7 @@ import java.util.Optional;
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
+@FunctionalInterface
 public interface FieldNameMapping {
 
   /**
@@ -54,7 +55,11 @@ public interface FieldNameMapping {
    * mapping of "a" to "localField").</p>
    *
    * @return an inverse mapping.
+   * @throws UnsupportedOperationException when the operation is not supported by this
+   * implementation.
    */
   @NonNull
-  FieldNameMapping invert();
+  default FieldNameMapping invert() {
+    throw new UnsupportedOperationException();
+  }
 }
