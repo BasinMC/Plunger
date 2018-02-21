@@ -14,23 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.basinmc.plunger.mapping;
+package org.basinmc.plunger.common.mapping;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Resolves one or more name mappings.
+ * Resolves one or more access mappings.
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
-public interface NameMapping extends ClassNameMapping, FieldNameMapping, MethodNameMapping {
+public interface AccessMapping extends ClassAccessMapping, FieldAccessMapping, MethodAccessMapping {
 
   /**
    * {@inheritDoc}
    */
   @NonNull
   @Override
-  default NameMapping invert() {
+  default AccessMapping invert() {
     throw new UnsupportedOperationException();
   }
 }

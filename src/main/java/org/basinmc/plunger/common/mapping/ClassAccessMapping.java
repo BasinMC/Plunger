@@ -14,21 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.basinmc.plunger.mapping;
+package org.basinmc.plunger.common.mapping;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.util.Optional;
 
 /**
- * Resolves one or more mappings for class names.
+ * Resolves one or more class access mappings.
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
 @FunctionalInterface
-public interface ClassNameMapping {
+public interface ClassAccessMapping {
 
   /**
-   * <p>Retrieves the target name for a specified class name.</p>
+   * <p>Retrieves the target access flags for the specified class.</p>
    *
    * <p>The class name will be provided as a fully qualified name in its JVM format (e.g. each
    * element of the package path will be separated by a slash ("/") character. For instance,
@@ -38,25 +38,26 @@ public interface ClassNameMapping {
    * <p>When no mapping is defined for the indicated class, an empty optional should be returned
    * instead.</p>
    *
-   * @param original the original class name.
-   * @return a mapping or, if no remapping is desired, an empty optional.
+   * @param className a class name.
+   * @param flags the current access flags.
+   * @return the target access flags or, if no change is desired, an empty optional.
    */
   @NonNull
-  Optional<String> getClassName(@NonNull String original);
+  Optional<AccessFlag> getClassAccessFlags(@NonNull String className, @NonNull AccessFlag flags);
 
   /**
-   * <p>Retrieves an inverted version of this mapping.</p>
+   * <p>Retrieves an inverse version of the mapping.</p>
    *
-   * <p>The resulting mapping will effectively reverse the effects of this mapping (e.g. when a
-   * mapping defines a remapping from "org/basinmc/plunger/Class" to "A", the inverse mapping would
-   * contain a mapping from "A" to "org/basinmc/plunger/Class").</p>
+   * <p>The resulting mapping will effectively reverse the effects of this mapping (e.g. a mapping
+   * which marks the private class "org.basinmc.plunger.Class" as public will mark the same class
+   * private again in its inversion).</p>
    *
-   * @return an inverse of this mapping.
+   * @return an inverse mapping.
    * @throws UnsupportedOperationException when the operation is not supported by this
    * implementation.
    */
   @NonNull
-  default ClassNameMapping invert() {
+  default ClassAccessMapping invert() {
     throw new UnsupportedOperationException();
   }
 }

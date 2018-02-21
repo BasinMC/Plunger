@@ -14,37 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.basinmc.plunger.generator;
+package org.basinmc.plunger.source.generator;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.util.Optional;
 
 /**
- * Provides documentation strings for methods.
+ * Provides documentation strings for fields.
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
 @FunctionalInterface
-public interface MethodJavaDocGenerator {
+public interface FieldJavaDocGenerator {
 
   /**
-   * <p>Generates a JavaDoc documentation string for the specified method.</p>
+   * <p>Generates a JavaDoc documentation string for the specified field.</p>
    *
-   * <p>The class name and method signature will be passed in the JVM format (e.g. slashes ("/")
-   * will be used instead of dots to separate package elements. For instance,
-   * "org.basinmc.plunger.Class" will become "org/basinmc/plunger/Class").</p>
+   * <p>The field class name and signature will be passed in the JVM format (e.g. class name
+   * elements will be separated by a slash ("/") instead of dots. For instance,
+   * "org.basinmc.plunger.Class" would become "org/basinmc/plunger/Class").</p>
    *
-   * <p>In case of method signatures, the return type and parameters will be specified within the
-   * signature (for instance, a method of return type void and no parameters will be referenced as
-   * "()V" while a method with the return type {@link Object} and a parameter of type boolean will
-   * result in "(Z)Ljava/lang/Object").</p>
+   * <p>The field signature consist of the full Bytecode type signature of the field (for instance,
+   * a field of type boolean will be specified as "Z" or a field of type {@link Object} will be
+   * specified as "Ljava/lang/Object").</p>
    *
    * @param className a reference to the enclosing class.
-   * @param methodName a field name.
+   * @param fieldName a field name.
    * @param signature a field signature
    * @return a field JavaDoc or, if no documentation is available, an empty optional.
    */
   @NonNull
-  Optional<String> getMethodDocumentation(@NonNull String className, @NonNull String methodName,
+  Optional<String> getFieldDocumentation(@NonNull String className, @NonNull String fieldName,
       @NonNull String signature);
 }

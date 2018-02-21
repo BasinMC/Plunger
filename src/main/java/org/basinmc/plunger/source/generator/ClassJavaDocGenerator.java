@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.basinmc.plunger.generator;
+package org.basinmc.plunger.source.generator;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.util.Optional;

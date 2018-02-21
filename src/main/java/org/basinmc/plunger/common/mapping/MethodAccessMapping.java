@@ -14,45 +14,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.basinmc.plunger.mapping;
+package org.basinmc.plunger.common.mapping;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.util.Optional;
 
 /**
- * Resolves one or more field access mappings.
+ * Resolves one or more method access mappings.
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
 @FunctionalInterface
-public interface FieldAccessMapping {
+public interface MethodAccessMapping {
 
   /**
    * <p>Retrieves the target access flags for the specified field.</p>
    *
-   * <p>The field class name and signature will be passed in the JVM format (e.g. class name
-   * elements will be separated by a slash ("/") instead of dots. For instance,
-   * "org.basinmc.plunger.Class" would become "org/basinmc/plunger/Class").</p>
+   * <p>The class name and method signature will be passed in the JVM format (e.g. slashes ("/")
+   * will be used instead of dots to separate package elements. For instance,
+   * "org.basinmc.plunger.Class" will become "org/basinmc/plunger/Class").</p>
    *
-   * <p>The field signature will consist of the full Bytecode type signature of the field (for
-   * instance, a field of type boolean will be specified as "Z" or a field of type {@link Object}
-   * will be specified as "Ljava/lang/Object").</p>
+   * <p>In case of method signatures, the return type and parameters will be specified within the
+   * signature (for instance, a method of return type void and no parameters will be referenced as
+   * "()V" while a method with the return type {@link Object} and a parameter of type boolean will
+   * result in "(Z)Ljava/lang/Object").</p>
    *
    * @param className a class name.
-   * @param fieldName a field name.
+   * @param methodName a field name.
    * @param signature a field signature.
    * @param flags the current access flags.
    * @return the target access flags or, if no change is desired, an empty optional.
    */
   @NonNull
-  Optional<AccessFlag> getClassAccessFlags(@NonNull String className, @NonNull String fieldName,
+  Optional<AccessFlag> getClassAccessFlags(@NonNull String className, @NonNull String methodName,
       @NonNull String signature, @NonNull AccessFlag flags);
 
   /**
    * <p>Retrieves an inverse version of this mapping.</p>
    *
    * <p>The resulting mapping will effectively reverse the effects of this mapping (for instance,
-   * the private field "test" may be mapped to public while it is mapped from public to private in
+   * the private method "test" may be mapped to public while it is mapped from public to private in
    * its inversion).</p>
    *
    * @return an inverse mapping.
@@ -60,7 +61,7 @@ public interface FieldAccessMapping {
    * implementation.
    */
   @NonNull
-  default FieldAccessMapping invert() {
+  default MethodAccessMapping invert() {
     throw new UnsupportedOperationException();
   }
 }

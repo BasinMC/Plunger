@@ -14,23 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.basinmc.plunger.mapping;
-
-import edu.umd.cs.findbugs.annotations.NonNull;
+package org.basinmc.plunger.source.generator;
 
 /**
- * Resolves one or more access mappings.
+ * Provides a generator for JavaDoc elements on all language elements.
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
-public interface AccessMapping extends ClassAccessMapping, FieldAccessMapping, MethodAccessMapping {
+public interface JavaDocGenerator extends ClassJavaDocGenerator, FieldJavaDocGenerator,
+    MethodJavaDocGenerator {
 
-  /**
-   * {@inheritDoc}
-   */
-  @NonNull
-  @Override
-  default AccessMapping invert() {
-    throw new UnsupportedOperationException();
-  }
 }

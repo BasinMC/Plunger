@@ -14,14 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.basinmc.plunger.generator;
+package org.basinmc.plunger.common.mapping;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
- * Provides a generator for JavaDoc elements on all language elements.
+ * Resolves one or more name mappings.
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
-public interface JavaDocGenerator extends ClassJavaDocGenerator, FieldJavaDocGenerator,
-    MethodJavaDocGenerator {
+public interface NameMapping extends ClassNameMapping, FieldNameMapping, MethodNameMapping {
 
+  /**
+   * {@inheritDoc}
+   */
+  @NonNull
+  @Override
+  default NameMapping invert() {
+    throw new UnsupportedOperationException();
+  }
 }
