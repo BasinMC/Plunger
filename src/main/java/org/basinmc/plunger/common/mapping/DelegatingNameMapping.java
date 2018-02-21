@@ -38,14 +38,17 @@ public class DelegatingNameMapping implements NameMapping {
   private final List<ClassNameMapping> classNameMappings;
   private final List<FieldNameMapping> fieldNameMappings;
   private final List<MethodNameMapping> methodNameMappings;
+  private final boolean resolveEnclosure;
 
   protected DelegatingNameMapping(
       @Nonnull List<ClassNameMapping> classNameMappings,
       @Nonnull List<FieldNameMapping> fieldNameMappings,
-      @Nonnull List<MethodNameMapping> methodNameMappings) {
+      @Nonnull List<MethodNameMapping> methodNameMappings,
+      boolean resolveEnclosure) {
     this.classNameMappings = new ArrayList<>(classNameMappings);
     this.fieldNameMappings = new ArrayList<>(fieldNameMappings);
     this.methodNameMappings = new ArrayList<>(methodNameMappings);
+    this.resolveEnclosure = resolveEnclosure;
   }
 
   /**
@@ -84,6 +87,11 @@ public class DelegatingNameMapping implements NameMapping {
       @NonNull String signature) {
     String result = fieldName;
 
+    if (this.resolveEnclosure) {
+      className = this.getClassName(className)
+          .orElse(className);
+    }
+
     for (FieldNameMapping mapping : this.fieldNameMappings) {
       result = mapping.getFieldName(className, result, signature)
           .orElse(result);
@@ -102,6 +110,11 @@ public class DelegatingNameMapping implements NameMapping {
   public Optional<String> getMethodName(@NonNull String className, @NonNull String methodName,
       @NonNull String signature) {
     String result = methodName;
+
+    if (this.resolveEnclosure) {
+      className = this.getClassName(className)
+          .orElse(className);
+    }
 
     for (MethodNameMapping mapping : this.methodNameMappings) {
       result = mapping.getMethodName(className, result, signature)
@@ -145,6 +158,7 @@ public class DelegatingNameMapping implements NameMapping {
     private final List<ClassNameMapping> classNameMappings = new ArrayList<>();
     private final List<FieldNameMapping> fieldNameMappings = new ArrayList<>();
     private final List<MethodNameMapping> methodNameMappings = new ArrayList<>();
+    private boolean resolveEnclosure;
 
     private Builder() {
     }
@@ -157,7 +171,7 @@ public class DelegatingNameMapping implements NameMapping {
     @Nonnull
     public DelegatingNameMapping build() {
       return new DelegatingNameMapping(this.classNameMappings, this.fieldNameMappings,
-          this.methodNameMappings);
+          this.methodNameMappings, this.resolveEnclosure);
     }
 
     /**
@@ -207,6 +221,27 @@ public class DelegatingNameMapping implements NameMapping {
     @Nonnull
     public Builder withMethodNameMapping(@Nonnull MethodNameMapping mapping) {
       this.methodNameMappings.add(mapping);
+      return this;
+    }
+
+    /**
+     * @see #withResolveEnclosure(boolean)
+     */
+    @Nonnull
+    public Builder withResolveEnclosure() {
+      return this.withResolveEnclosure(true);
+    }
+
+    /**
+     * Selects whether or not enclosed mapped elements (such as fields or methods) shall be passed a
+     * resolved owner type (since mappings typically pass the original name as the owner value).
+     *
+     * @param value true if enabled, false otherwise
+     * @return a reference to this builder.
+     */
+    @Nonnull
+    public Builder withResolveEnclosure(boolean value) {
+      this.resolveEnclosure = value;
       return this;
     }
   }
