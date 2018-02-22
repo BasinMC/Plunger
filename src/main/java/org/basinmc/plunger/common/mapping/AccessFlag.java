@@ -19,6 +19,7 @@ package org.basinmc.plunger.common.mapping;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.util.Objects;
 import javax.annotation.Nonnull;
+import org.jboss.forge.roaster.model.Visibility;
 import org.objectweb.asm.Opcodes;
 
 /**
@@ -95,6 +96,28 @@ public final class AccessFlag {
   }
 
   /**
+   * Creates a new access flag set based on the passed Roaster visibility.
+   *
+   * @param visibility a visibility.
+   * @return an access flag set.
+   */
+  @Nonnull
+  public static AccessFlag byVisibility(@Nonnull Visibility visibility) {
+    switch (visibility) {
+      case PUBLIC:
+        return PUBLIC;
+      case PROTECTED:
+        return PROTECTED;
+      case PRIVATE:
+        return PRIVATE;
+      case PACKAGE_PRIVATE:
+        return PACKAGE_PRIVATE;
+    }
+
+    return new AccessFlag(0);
+  }
+
+  /**
    * Evaluates whether this set of flags contains all of the flags set within the passed set.
    *
    * @param value a set of flags.
@@ -135,6 +158,27 @@ public final class AccessFlag {
     }
 
     return opcode;
+  }
+
+  /**
+   * Converts this set of access flags into its Roaster visibility representation.
+   *
+   * @return a visibility.
+   * @throws IllegalStateException when no visibility flag is present within this set.
+   */
+  @Nonnull
+  public Visibility toVisibility() {
+    if (this.contains(PUBLIC)) {
+      return Visibility.PUBLIC;
+    } else if (this.contains(PROTECTED)) {
+      return Visibility.PROTECTED;
+    } else if (this.contains(PACKAGE_PRIVATE)) {
+      return Visibility.PACKAGE_PRIVATE;
+    } else if (this.contains(PRIVATE)) {
+      return Visibility.PRIVATE;
+    }
+
+    throw new IllegalStateException("Cannot convert to visibility: No visibility flags set");
   }
 
   /**
