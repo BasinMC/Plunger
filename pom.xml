@@ -91,10 +91,11 @@
       <artifactId>asm-commons</artifactId>
       <version>6.1-beta2</version>
     </dependency>
-    <dependency>
+    <dependency> <!-- Required for Google Formatting -->
       <groupId>com.google.googlejavaformat</groupId>
       <artifactId>google-java-format</artifactId>
       <version>1.5</version>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.jboss.forge.roaster</groupId>
@@ -110,6 +111,8 @@
       <groupId>com.github.spotbugs</groupId>
       <artifactId>spotbugs-annotations</artifactId>
       <version>3.1.1</version>
+      <scope>provided</scope>
+      <optional>true</optional>
     </dependency>
 
     <dependency>
