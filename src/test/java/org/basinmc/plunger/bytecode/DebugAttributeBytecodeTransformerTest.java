@@ -50,6 +50,7 @@ public class DebugAttributeBytecodeTransformerTest extends AbstractPlungerTest {
     this.extractSourceFile("/TestClass.bytecode", testFile);
 
     BytecodePlunger plunger = Plunger.bytecodeBuilder()
+        .withSourceRelocation(false)
         .withTransformer(new DebugAttributeBytecodeTransformer(true, true, true, true))
         .build(this.getSource(), this.getTarget());
     plunger.apply();

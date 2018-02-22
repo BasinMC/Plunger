@@ -66,6 +66,7 @@ public class NameMappingBytecodeTransformerTest extends AbstractPlungerTest {
         .thenReturn(Optional.of("a"));
 
     BytecodePlunger plunger = Plunger.bytecodeBuilder()
+        .withSourceRelocation(false)
         .withTransformer(new NameMappingBytecodeTransformer(
             DelegatingNameMapping.builder()
                 .withClassMapping(classMapping)

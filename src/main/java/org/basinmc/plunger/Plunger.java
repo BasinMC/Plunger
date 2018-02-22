@@ -189,6 +189,7 @@ public interface Plunger {
     protected Predicate<Path> classInclusionVoter = (p) -> true;
     protected Predicate<Path> resourceVoter = (p) -> true;
     protected Predicate<Path> transformationVoter = (p) -> true;
+    protected boolean sourceRelocation = true;
 
     /**
      * Constructs a new Plunger with the specified source and target attributes.
@@ -250,6 +251,19 @@ public interface Plunger {
       this.resourceVoter = (p) -> false;
       return this;
     }
+
+    /**
+     * Selects whether or not to relocate the source files within the target path based on their new
+     * names.
+     *
+     * @param value true if relocation is desired, false otherwise.
+     * @return a reference to this builder.
+     */
+    @Nonnull
+    public Builder withSourceRelocation(boolean value) {
+      this.sourceRelocation = value;
+      return this;
+    }
   }
 
   /**
@@ -272,6 +286,7 @@ public interface Plunger {
           this.classInclusionVoter,
           this.transformationVoter,
           this.resourceVoter,
+          this.sourceRelocation,
           this.transformers
       );
     }
@@ -327,6 +342,16 @@ public interface Plunger {
       super.withoutResources();
       return this;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Nonnull
+    @Override
+    public BytecodeBuilder withSourceRelocation(boolean value) {
+      super.withSourceRelocation(value);
+      return this;
+    }
   }
 
   /**
@@ -350,6 +375,7 @@ public interface Plunger {
           this.classInclusionVoter,
           this.transformationVoter,
           this.resourceVoter,
+          this.sourceRelocation,
           this.formatter,
           this.transformers
       );
@@ -417,6 +443,16 @@ public interface Plunger {
     @Override
     public SourcecodeBuilder withoutResources() {
       super.withoutResources();
+      return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Nonnull
+    @Override
+    public SourcecodeBuilder withSourceRelocation(boolean value) {
+      super.withSourceRelocation(value);
       return this;
     }
   }

@@ -36,6 +36,7 @@ import org.basinmc.plunger.bytecode.DelegatingClassVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,8 +59,10 @@ public class BytecodePlunger extends AbstractPlunger {
       @NonNull Predicate<Path> classInclusionVoter,
       @NonNull Predicate<Path> transformationVoter,
       @NonNull Predicate<Path> resourceVoter,
+      boolean sourceRelocation,
       @NonNull List<BytecodeTransformer> transformers) {
-    super(source, target, classInclusionVoter, transformationVoter, resourceVoter);
+    super(source, target, classInclusionVoter, transformationVoter, resourceVoter,
+        sourceRelocation);
     this.transformers = new ArrayList<>(transformers);
 
     // since we do not know with which FileSystem we'll be dealing with, we'll have to initialize
@@ -167,14 +170,21 @@ public class BytecodePlunger extends AbstractPlunger {
       // if we've been given a full chain of transformers, we'll construct our writer and begin the
       // transformation
       ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-      nextVisitor.setVisitor(writer);
+      ClassNameExtractorVisitor extractorVisitor = new ClassNameExtractorVisitor(writer);
+      nextVisitor.setVisitor(extractorVisitor);
 
       try (InputStream inputStream = Files.newInputStream(file)) {
         ClassReader reader = new ClassReader(inputStream);
         reader.accept(chainStart, ClassReader.EXPAND_FRAMES);
       }
 
-      // TODO: Correct target path based on new class name
+      if (this.sourceRelocation && extractorVisitor.className != null) {
+        target = this.target.resolve(extractorVisitor.className + ".class");
+        logger.info("  Relocated to {}", target);
+      }
+
+      Files.createDirectories(target.getParent());
+
       try (WritableByteChannel outputChannel = Files
           .newByteChannel(target, StandardOpenOption.CREATE, StandardOpenOption.WRITE,
               StandardOpenOption.TRUNCATE_EXISTING)) {
@@ -187,6 +197,32 @@ public class BytecodePlunger extends AbstractPlunger {
       // when things go wrong
       logger.error("    FAILED");
       throw ex;
+    }
+  }
+
+  /**
+   * Provides a visitor implementation which's sole purpose is to retrieve the new class name.
+   */
+  private static final class ClassNameExtractorVisitor extends ClassVisitor {
+
+    private String className;
+
+    private ClassNameExtractorVisitor() {
+      super(Opcodes.ASM6);
+    }
+
+    private ClassNameExtractorVisitor(@Nonnull ClassVisitor classVisitor) {
+      super(Opcodes.ASM6, classVisitor);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void visit(int version, int access, String name, String signature, String superName,
+        String[] interfaces) {
+      super.visit(version, access, name, signature, superName, interfaces);
+      this.className = name;
     }
   }
 }

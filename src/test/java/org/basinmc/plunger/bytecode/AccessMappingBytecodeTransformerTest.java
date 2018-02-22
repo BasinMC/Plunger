@@ -60,6 +60,7 @@ public class AccessMappingBytecodeTransformerTest extends AbstractPlungerTest {
         .thenReturn(Optional.of(AccessFlag.PROTECTED.add(AccessFlag.FINAL)));
 
     BytecodePlunger plunger = Plunger.bytecodeBuilder()
+        .withSourceRelocation(false)
         .withTransformer(new AccessMappingBytecodeTransformer(mapping))
         .build(this.getSource(), this.getTarget());
     plunger.apply();

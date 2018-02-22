@@ -56,6 +56,7 @@ public class AccessMappingSourcecodeTransformerTest extends AbstractPlungerTest 
         .thenReturn(Optional.of(AccessFlag.PROTECTED.add(AccessFlag.FINAL)));
 
     SourcecodePlunger plunger = Plunger.sourceBuilder()
+        .withSourceRelocation(false)
         .withFormatter(new TestSourcecodeFormatter())
         .withTransformer(new AccessMappingSourcecodeTransformer(mapping))
         .build(this.getSource(), this.getTarget());

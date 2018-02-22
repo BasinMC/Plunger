@@ -51,9 +51,11 @@ public class SourcecodePlunger extends AbstractPlunger {
       @NonNull Predicate<Path> classInclusionVoter,
       @NonNull Predicate<Path> transformationVoter,
       @NonNull Predicate<Path> resourceVoter,
+      boolean sourceRelocation,
       @Nonnull SourcecodeFormatter formatter,
       @Nonnull List<SourcecodeTransformer> transformers) {
-    super(source, target, classInclusionVoter, transformationVoter, resourceVoter);
+    super(source, target, classInclusionVoter, transformationVoter, resourceVoter,
+        sourceRelocation);
     this.formatter = formatter;
     this.transformers = new ArrayList<>(transformers);
 
@@ -136,7 +138,12 @@ public class SourcecodePlunger extends AbstractPlunger {
       // reformat the code and pass it to the selected java code formatter (we generally encode
       // everything as UTF-8 since it's typically used anyways
       // TODO: Permit overriding of charsets (low priority)
-      // TODO: Correct target path based on new class name
+      if (this.sourceRelocation) {
+        target = this.target.resolve(type.getQualifiedName().replace('.', '/') + ".java");
+        logger.info("  Relocated to {}", target);
+      }
+
+      Files.createDirectories(target.getParent());
       Files.write(target, this.formatter.format(type.toString()).getBytes(StandardCharsets.UTF_8));
       logger.info("    TRANSFORMED");
     } catch (IOException ex) {

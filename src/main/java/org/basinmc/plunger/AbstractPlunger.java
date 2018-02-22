@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
 public abstract class AbstractPlunger implements Plunger {
+  private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
   protected final Predicate<Path> classInclusionVoter;
   protected final Predicate<Path> resourceVoter;
@@ -40,20 +41,22 @@ public abstract class AbstractPlunger implements Plunger {
   protected final Path target;
   protected final FileSystem targetFileSystem;
   protected final Predicate<Path> transformationVoter;
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  protected final boolean sourceRelocation;
 
   protected AbstractPlunger(
       @NonNull Path source,
       @NonNull Path target,
       @NonNull Predicate<Path> classInclusionVoter,
       @NonNull Predicate<Path> transformationVoter,
-      @NonNull Predicate<Path> resourceVoter) {
+      @NonNull Predicate<Path> resourceVoter,
+      boolean sourceRelocation) {
     this.source = source;
     this.target = target;
 
     this.classInclusionVoter = classInclusionVoter;
     this.transformationVoter = transformationVoter;
     this.resourceVoter = resourceVoter;
+    this.sourceRelocation = sourceRelocation;
 
     this.sourceFileSystem = source.getFileSystem();
     this.targetFileSystem = target.getFileSystem();

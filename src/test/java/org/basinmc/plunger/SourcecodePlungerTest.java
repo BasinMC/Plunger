@@ -47,6 +47,7 @@ public class SourcecodePlungerTest extends AbstractPlungerTest {
     SourcecodeTransformer transformer = Mockito.mock(SourcecodeTransformer.class);
 
     SourcecodePlunger plunger = Plunger.sourceBuilder()
+        .withSourceRelocation(false)
         .withFormatter(new TestSourcecodeFormatter())
         .withTransformer(transformer)
         .build(this.getSource(), this.getTarget());

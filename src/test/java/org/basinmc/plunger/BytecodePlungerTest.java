@@ -48,6 +48,7 @@ public class BytecodePlungerTest extends AbstractPlungerTest {
         .thenReturn(Optional.empty());
 
     BytecodePlunger plunger = Plunger.bytecodeBuilder()
+        .withSourceRelocation(false)
         .withTransformer(transformer)
         .build(this.getSource(), this.getTarget());
     plunger.apply();
