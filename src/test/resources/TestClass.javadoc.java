@@ -23,10 +23,18 @@ public class TestClass {
   private final int testField = 21;
 
   /** Test Constructor Documentation */
-  private TestClass() {}
+  private TestClass(String value) {
+    System.out.println(value);
+  }
 
   /** Test Method Documentation */
   public int testMethod() {
     return 42;
+  }
+
+  public static void main(String[] arguments) {
+    TestClass test = new TestClass(arguments.length >= 1 ? arguments[0] : "None");
+    System.out.println("testField = " + test.testField);
+    System.out.println("testMethod() = " + test.testMethod());
   }
 }

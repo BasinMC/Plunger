@@ -49,7 +49,8 @@ public class JavaDocSourcecodeTransformerTest extends AbstractPlungerTest {
         generator.getFieldDocumentation("org/basinmc/plunger/test/TestClass", "testField", "I"))
         .thenReturn(Optional.of("Test Field Documentation"));
     Mockito.when(
-        generator.getMethodDocumentation("org/basinmc/plunger/test/TestClass", "<init>", "()V"))
+        generator.getMethodDocumentation("org/basinmc/plunger/test/TestClass", "<init>",
+            "(Ljava/lang/String)V"))
         .thenReturn(Optional.of("Test Constructor Documentation"));
     Mockito.when(
         generator.getMethodDocumentation("org/basinmc/plunger/test/TestClass", "testMethod", "()I"))
