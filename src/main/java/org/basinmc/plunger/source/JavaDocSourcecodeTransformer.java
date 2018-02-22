@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import org.basinmc.plunger.source.generator.JavaDocGenerator;
 import org.basinmc.plunger.source.utility.ReferenceUtility;
+import org.jboss.forge.roaster.model.Type;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
@@ -77,9 +78,12 @@ public class JavaDocSourcecodeTransformer extends AbstractCascadingSourcecodeTra
     }
 
     if (methodSource.getReturnType() != null) {
-      returnType = ReferenceUtility
-          .getBytecodeTypeDescription(methodSource.getReturnType().getQualifiedName(),
-              methodSource.getReturnType().getArrayDimensions());
+      Type<?> type = methodSource.getReturnType();
+
+      returnType = ReferenceUtility.getBytecodeTypeDescription(
+          type.isPrimitive() ? type.getName() : type.getQualifiedName(),
+          type.getArrayDimensions()
+      );
     }
 
     this.generator.getMethodDocumentation(
@@ -88,9 +92,14 @@ public class JavaDocSourcecodeTransformer extends AbstractCascadingSourcecodeTra
         ReferenceUtility.generateBytecodeSignature(
             returnType,
             methodSource.getParameters().stream()
-                .map((p) -> ReferenceUtility
-                    .getBytecodeTypeDescription(p.getType().getQualifiedName(),
-                        p.getType().getArrayDimensions()))
+                .map((p) -> {
+                  Type<?> type = p.getType();
+
+                  return ReferenceUtility.getBytecodeTypeDescription(
+                      type.isPrimitive() ? type.getName() : type.getQualifiedName(),
+                      type.getArrayDimensions()
+                  );
+                })
                 .collect(Collectors.toList())
         ))
         .ifPresent((doc) -> methodSource.getJavaDoc().setFullText(doc));
