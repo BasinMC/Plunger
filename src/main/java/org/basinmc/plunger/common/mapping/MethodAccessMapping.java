@@ -46,7 +46,7 @@ public interface MethodAccessMapping {
    * @return the target access flags or, if no change is desired, an empty optional.
    */
   @NonNull
-  Optional<AccessFlag> getClassAccessFlags(@NonNull String className, @NonNull String methodName,
+  Optional<AccessFlag> getMethodAccessFlags(@NonNull String className, @NonNull String methodName,
       @NonNull String signature, @NonNull AccessFlag flags);
 
   /**

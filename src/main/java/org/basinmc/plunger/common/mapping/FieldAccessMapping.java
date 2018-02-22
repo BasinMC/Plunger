@@ -45,7 +45,7 @@ public interface FieldAccessMapping {
    * @return the target access flags or, if no change is desired, an empty optional.
    */
   @NonNull
-  Optional<AccessFlag> getClassAccessFlags(@NonNull String className, @NonNull String fieldName,
+  Optional<AccessFlag> getFieldAccessFlags(@NonNull String className, @NonNull String fieldName,
       @NonNull String signature, @NonNull AccessFlag flags);
 
   /**
