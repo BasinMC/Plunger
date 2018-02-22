@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 
 /**
@@ -123,6 +124,21 @@ public class DelegatingNameMapping implements NameMapping {
 
     return Optional.of(result)
         .filter((r) -> !methodName.equals(r));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @NonNull
+  @Override
+  public DelegatingNameMapping invert() {
+    return new DelegatingNameMapping(
+        this.classNameMappings.stream().map(ClassNameMapping::invert).collect(Collectors.toList()),
+        this.fieldNameMappings.stream().map(FieldNameMapping::invert).collect(Collectors.toList()),
+        this.methodNameMappings.stream().map(MethodNameMapping::invert)
+            .collect(Collectors.toList()),
+        this.resolveEnclosure
+    );
   }
 
   /**
