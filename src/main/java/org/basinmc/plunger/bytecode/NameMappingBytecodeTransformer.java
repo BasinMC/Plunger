@@ -31,11 +31,11 @@ import org.objectweb.asm.commons.Remapper;
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
-public class MappingBytecodeTransformer implements BytecodeTransformer {
+public class NameMappingBytecodeTransformer implements BytecodeTransformer {
 
   private final NameMapping mapping;
 
-  public MappingBytecodeTransformer(@Nonnull NameMapping mapping) {
+  public NameMappingBytecodeTransformer(@Nonnull NameMapping mapping) {
     this.mapping = mapping;
   }
 
@@ -61,7 +61,7 @@ public class MappingBytecodeTransformer implements BytecodeTransformer {
      */
     @Override
     public String mapType(String type) {
-      return MappingBytecodeTransformer.this.mapping.getClassName(type)
+      return NameMappingBytecodeTransformer.this.mapping.getClassName(type)
           .orElse(type);
     }
 
@@ -76,7 +76,7 @@ public class MappingBytecodeTransformer implements BytecodeTransformer {
         return name;
       }
 
-      return MappingBytecodeTransformer.this.mapping.getMethodName(owner, name, desc)
+      return NameMappingBytecodeTransformer.this.mapping.getMethodName(owner, name, desc)
           .orElse(name);
     }
 
@@ -85,7 +85,7 @@ public class MappingBytecodeTransformer implements BytecodeTransformer {
      */
     @Override
     public String mapFieldName(String owner, String name, String desc) {
-      return MappingBytecodeTransformer.this.mapping.getFieldName(owner, name, desc)
+      return NameMappingBytecodeTransformer.this.mapping.getFieldName(owner, name, desc)
           .orElse(name);
     }
   }
