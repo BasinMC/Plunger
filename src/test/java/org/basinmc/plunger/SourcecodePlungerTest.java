@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.basinmc.plunger.source.SourcecodeTransformer;
+import org.basinmc.plunger.source.TestSourcecodeFormatter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -46,6 +47,7 @@ public class SourcecodePlungerTest extends AbstractPlungerTest {
     SourcecodeTransformer transformer = Mockito.mock(SourcecodeTransformer.class);
 
     SourcecodePlunger plunger = Plunger.sourceBuilder()
+        .withFormatter(new TestSourcecodeFormatter())
         .withTransformer(transformer)
         .build(this.getSource(), this.getTarget());
     plunger.apply();

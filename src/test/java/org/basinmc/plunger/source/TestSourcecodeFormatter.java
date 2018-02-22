@@ -14,19 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.basinmc.plunger.test;
+package org.basinmc.plunger.source;
 
-/** Test Documentation */
-public class TestClass {
+import javax.annotation.Nonnull;
+import org.basinmc.plunger.source.formatter.GoogleSourcecodeFormatter;
 
-  /** Test Field Documentation */
-  private final int testField = 21;
+/**
+ * Switches CRLF with LF line endings.
+ *
+ * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
+ */
+public class TestSourcecodeFormatter extends GoogleSourcecodeFormatter {
 
-  /** Test Constructor Documentation */
-  private TestClass() {}
-
-  /** Test Method Documentation */
-  public int testMethod() {
-    return 42;
+  /**
+   * {@inheritDoc}
+   */
+  @Nonnull
+  @Override
+  public String format(@Nonnull String source) {
+    return super.format(source).replace("\r", "");
   }
 }

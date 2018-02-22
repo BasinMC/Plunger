@@ -56,6 +56,7 @@ public class JavaDocSourcecodeTransformerTest extends AbstractPlungerTest {
         .thenReturn(Optional.of("Test Method Documentation"));
 
     SourcecodePlunger plunger = Plunger.sourceBuilder()
+        .withFormatter(new TestSourcecodeFormatter())
         .withTransformer(new JavaDocSourcecodeTransformer(generator))
         .build(this.getSource(), this.getTarget());
     plunger.apply();

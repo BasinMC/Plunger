@@ -18,12 +18,11 @@ package org.basinmc.plunger.test;
 
 class TestClass {
 
-	public int testField = 21;
+  public int testField = 21;
 
-	private TestClass() {
-	}
+  private TestClass() {}
 
-	protected final int testMethod() {
-		return 42;
-	}
+  protected final int testMethod() {
+    return 42;
+  }
 }
