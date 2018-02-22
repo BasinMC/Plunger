@@ -16,23 +16,34 @@
  */
 package org.basinmc.plunger.source;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import java.nio.file.Path;
-import org.jboss.forge.roaster.model.source.JavaSource;
+import javax.annotation.Nonnull;
 
 /**
- * Performs an arbitrary transformation on a Java source file.
+ * Provides means to format arbitrary source code into a pre-defined format.
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
 @FunctionalInterface
-public interface SourceCodeTransformer {
+public interface SourcecodeFormatter {
 
   /**
-   * Applies an arbitrary transformation to the passed class source code.
+   * Reformats the passed source code into a pre-defined format (typically backed by a Styleguide
+   * document).
    *
-   * @param source a relative path to the file in which this class is defined.
-   * @param sourceType a parsed version of the class file.
+   * @param source the full class source code.
+   * @return a formatted version of the source code.
    */
-  void transform(@NonNull Path source, @NonNull JavaSource<?> sourceType);
+  @Nonnull
+  String format(@Nonnull String source);
+
+  /**
+   * Creates a new no-operation code formatter which passes the code back as-is (e.g. with native
+   * formatting).
+   *
+   * @return a no-op source code formatter.
+   */
+  @Nonnull
+  static SourcecodeFormatter noop() {
+    return (source) -> source;
+  }
 }

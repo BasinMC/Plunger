@@ -30,11 +30,11 @@ import org.jboss.forge.roaster.model.source.MethodSource;
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
-public class JavaDocSourceCodeTransformer extends AbstractCascadingSourceCodeTransformer {
+public class JavaDocSourcecodeTransformer extends AbstractCascadingSourcecodeTransformer {
 
   private final JavaDocGenerator generator;
 
-  public JavaDocSourceCodeTransformer(@Nonnull JavaDocGenerator generator) {
+  public JavaDocSourcecodeTransformer(@Nonnull JavaDocGenerator generator) {
     this.generator = generator;
   }
 

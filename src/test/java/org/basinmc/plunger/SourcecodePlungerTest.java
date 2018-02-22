@@ -21,17 +21,17 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import org.basinmc.plunger.source.SourceCodeTransformer;
+import org.basinmc.plunger.source.SourcecodeTransformer;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 /**
- * Evaluates whether {@link SourceCodePlunger} performs as expected.
+ * Evaluates whether {@link SourcecodePlunger} performs as expected.
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
-public class SourceCodePlungerTest extends AbstractPlungerTest {
+public class SourcecodePlungerTest extends AbstractPlungerTest {
 
   /**
    * Evaluates whether the source plunger implementation correctly notifies transformers and copies
@@ -43,9 +43,9 @@ public class SourceCodePlungerTest extends AbstractPlungerTest {
     Path testPath = Paths.get("TestClass.java");
     this.extractSourceFile("/TestClass.java", testPath);
 
-    SourceCodeTransformer transformer = Mockito.mock(SourceCodeTransformer.class);
+    SourcecodeTransformer transformer = Mockito.mock(SourcecodeTransformer.class);
 
-    SourceCodePlunger plunger = Plunger.sourceBuilder()
+    SourcecodePlunger plunger = Plunger.sourceBuilder()
         .withTransformer(transformer)
         .build(this.getSource(), this.getTarget());
     plunger.apply();

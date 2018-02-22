@@ -31,11 +31,11 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 /**
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
-public class AccessMappingSourceCodeTransformer extends AbstractCascadingSourceCodeTransformer {
+public class AccessMappingSourcecodeTransformer extends AbstractCascadingSourcecodeTransformer {
 
   private final AccessMapping mapping;
 
-  public AccessMappingSourceCodeTransformer(@Nonnull AccessMapping mapping) {
+  public AccessMappingSourcecodeTransformer(@Nonnull AccessMapping mapping) {
     this.mapping = mapping;
   }
 

@@ -28,8 +28,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Predicate;
 import javax.annotation.Nonnull;
-import org.basinmc.plunger.source.SourceCodeTransformer;
-import org.basinmc.plunger.source.SourceFormatter;
+import org.basinmc.plunger.source.SourcecodeTransformer;
+import org.basinmc.plunger.source.SourcecodeFormatter;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaSource;
 import org.slf4j.Logger;
@@ -38,21 +38,21 @@ import org.slf4j.LoggerFactory;
 /**
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
-public class SourceCodePlunger extends AbstractPlunger {
+public class SourcecodePlunger extends AbstractPlunger {
 
-  private static final Logger logger = LoggerFactory.getLogger(SourceCodePlunger.class);
+  private static final Logger logger = LoggerFactory.getLogger(SourcecodePlunger.class);
 
   private final PathMatcher classMatcher;
-  private final SourceFormatter formatter;
-  private final List<SourceCodeTransformer> transformers;
+  private final SourcecodeFormatter formatter;
+  private final List<SourcecodeTransformer> transformers;
 
-  SourceCodePlunger(@NonNull Path source,
+  SourcecodePlunger(@NonNull Path source,
       @NonNull Path target,
       @NonNull Predicate<Path> classInclusionVoter,
       @NonNull Predicate<Path> transformationVoter,
       @NonNull Predicate<Path> resourceVoter,
-      @Nonnull SourceFormatter formatter,
-      @Nonnull List<SourceCodeTransformer> transformers) {
+      @Nonnull SourcecodeFormatter formatter,
+      @Nonnull List<SourcecodeTransformer> transformers) {
     super(source, target, classInclusionVoter, transformationVoter, resourceVoter);
     this.formatter = formatter;
     this.transformers = new ArrayList<>(transformers);
@@ -129,7 +129,7 @@ public class SourceCodePlunger extends AbstractPlunger {
         type = Roaster.parse(JavaSource.class, inputStream);
       }
 
-      for (SourceCodeTransformer transformer : this.transformers) {
+      for (SourcecodeTransformer transformer : this.transformers) {
         transformer.transform(source, type);
       }
 

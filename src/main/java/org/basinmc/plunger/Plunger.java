@@ -35,8 +35,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import org.basinmc.plunger.bytecode.BytecodeTransformer;
-import org.basinmc.plunger.source.SourceCodeTransformer;
-import org.basinmc.plunger.source.SourceFormatter;
+import org.basinmc.plunger.source.SourcecodeTransformer;
+import org.basinmc.plunger.source.SourcecodeFormatter;
 
 /**
  * Applies a set of pre-configured transformers to an arbitrary archive or directory of either
@@ -156,8 +156,8 @@ public interface Plunger {
    * @return an empty builder.
    */
   @Nonnull
-  static SourceCodeBuilder sourceBuilder() {
-    return new SourceCodeBuilder();
+  static SourcecodeBuilder sourceBuilder() {
+    return new SourcecodeBuilder();
   }
 
   /**
@@ -333,18 +333,18 @@ public interface Plunger {
    * Provides a factory for configuring and constructing Plunger instances which are capable of
    * transforming arbitrary Java source code.
    */
-  class SourceCodeBuilder extends Builder {
+  class SourcecodeBuilder extends Builder {
 
-    private final List<SourceCodeTransformer> transformers = new ArrayList<>();
-    private SourceFormatter formatter = SourceFormatter.noop();
+    private final List<SourcecodeTransformer> transformers = new ArrayList<>();
+    private SourcecodeFormatter formatter = SourcecodeFormatter.noop();
 
     /**
      * {@inheritDoc}
      */
     @NonNull
     @Override
-    public SourceCodePlunger build(@NonNull Path source, @NonNull Path target) {
-      return new SourceCodePlunger(
+    public SourcecodePlunger build(@NonNull Path source, @NonNull Path target) {
+      return new SourcecodePlunger(
           source,
           target,
           this.classInclusionVoter,
@@ -360,7 +360,7 @@ public interface Plunger {
      */
     @NonNull
     @Override
-    public SourceCodeBuilder withClassInclusionVoter(@NonNull Predicate<Path> voter) {
+    public SourcecodeBuilder withClassInclusionVoter(@NonNull Predicate<Path> voter) {
       super.withClassInclusionVoter(voter);
       return this;
     }
@@ -373,7 +373,7 @@ public interface Plunger {
      * @return a reference to this builder.
      */
     @Nonnull
-    public SourceCodeBuilder withFormatter(@Nonnull SourceFormatter formatter) {
+    public SourcecodeBuilder withFormatter(@Nonnull SourcecodeFormatter formatter) {
       this.formatter = formatter;
       return this;
     }
@@ -383,7 +383,7 @@ public interface Plunger {
      */
     @NonNull
     @Override
-    public SourceCodeBuilder withResourceVoter(@NonNull Predicate<Path> voter) {
+    public SourcecodeBuilder withResourceVoter(@NonNull Predicate<Path> voter) {
       super.withResourceVoter(voter);
       return this;
     }
@@ -393,7 +393,7 @@ public interface Plunger {
      */
     @NonNull
     @Override
-    public SourceCodeBuilder withTransformationVoter(@NonNull Predicate<Path> voter) {
+    public SourcecodeBuilder withTransformationVoter(@NonNull Predicate<Path> voter) {
       super.withTransformationVoter(voter);
       return this;
     }
@@ -405,7 +405,7 @@ public interface Plunger {
      * @return a reference to this builder.
      */
     @Nonnull
-    public SourceCodeBuilder withTransformer(@Nonnull SourceCodeTransformer transformer) {
+    public SourcecodeBuilder withTransformer(@Nonnull SourcecodeTransformer transformer) {
       this.transformers.add(transformer);
       return this;
     }
@@ -415,7 +415,7 @@ public interface Plunger {
      */
     @NonNull
     @Override
-    public SourceCodeBuilder withoutResources() {
+    public SourcecodeBuilder withoutResources() {
       super.withoutResources();
       return this;
     }

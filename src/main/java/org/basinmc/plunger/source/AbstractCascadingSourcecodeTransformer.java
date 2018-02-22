@@ -32,7 +32,7 @@ import org.jboss.forge.roaster.model.source.TypeHolderSource;
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
-public abstract class AbstractCascadingSourceCodeTransformer implements SourceCodeTransformer {
+public abstract class AbstractCascadingSourcecodeTransformer implements SourcecodeTransformer {
 
   /**
    * {@inheritDoc}

@@ -25,8 +25,9 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import org.basinmc.plunger.AbstractPlungerTest;
 import org.basinmc.plunger.Plunger;
-import org.basinmc.plunger.SourceCodePlunger;
-import org.basinmc.plunger.source.generator.JavaDocGenerator;
+import org.basinmc.plunger.SourcecodePlunger;
+import org.basinmc.plunger.common.mapping.AccessFlag;
+import org.basinmc.plunger.common.mapping.AccessMapping;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -34,36 +35,35 @@ import org.mockito.Mockito;
 /**
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
-public class JavaDocSourceCodeTransformerTest extends AbstractPlungerTest {
+public class AccessMappingSourcecodeTransformerTest extends AbstractPlungerTest {
 
   @Test
-  public void testExecute() throws IOException {
+  public void testApply() throws IOException {
     Path testFile = Paths.get("TestClass.java");
     this.extractSourceFile("/TestClass.java", testFile);
 
-    JavaDocGenerator generator = Mockito.mock(JavaDocGenerator.class);
+    AccessMapping mapping = Mockito.mock(AccessMapping.class);
 
-    Mockito.when(generator.getClassDocumentation("org/basinmc/plunger/test/TestClass"))
-        .thenReturn(Optional.of("Test Documentation"));
-    Mockito.when(
-        generator.getFieldDocumentation("org/basinmc/plunger/test/TestClass", "testField", "I"))
-        .thenReturn(Optional.of("Test Field Documentation"));
-    Mockito.when(
-        generator.getMethodDocumentation("org/basinmc/plunger/test/TestClass", "<init>", "()V"))
-        .thenReturn(Optional.of("Test Constructor Documentation"));
-    Mockito.when(
-        generator.getMethodDocumentation("org/basinmc/plunger/test/TestClass", "testMethod", "()I"))
-        .thenReturn(Optional.of("Test Method Documentation"));
+    Mockito
+        .when(mapping.getClassAccessFlags("org/basinmc/plunger/test/TestClass", AccessFlag.PUBLIC))
+        .thenReturn(Optional.of(AccessFlag.PACKAGE_PRIVATE));
+    Mockito.when(mapping.getFieldAccessFlags("org/basinmc/plunger/test/TestClass", "testField", "I",
+        AccessFlag.PRIVATE.add(AccessFlag.FINAL)))
+        .thenReturn(Optional.of(AccessFlag.PUBLIC));
+    Mockito.when(mapping
+        .getMethodAccessFlags("org/basinmc/plunger/test/TestClass", "testMethod", "()I",
+            AccessFlag.PUBLIC))
+        .thenReturn(Optional.of(AccessFlag.PROTECTED.add(AccessFlag.FINAL)));
 
-    SourceCodePlunger plunger = Plunger.sourceBuilder()
-        .withTransformer(new JavaDocSourceCodeTransformer(generator))
+    SourcecodePlunger plunger = Plunger.sourceBuilder()
+        .withTransformer(new AccessMappingSourcecodeTransformer(mapping))
         .build(this.getSource(), this.getTarget());
     plunger.apply();
 
     String expected;
 
-    try (InputStream inputStream = JavaDocSourceCodeTransformerTest.class
-        .getResourceAsStream("/TestClass.javadoc.java")) {
+    try (InputStream inputStream = JavaDocSourcecodeTransformerTest.class
+        .getResourceAsStream("/TestClass.access.java")) {
       byte[] data = new byte[inputStream.available()];
       inputStream.read(data);
 
