@@ -44,7 +44,7 @@ public class AccessMappingBytecodeTransformerTest extends AbstractPlungerTest {
   @Test
   public void testExecute() throws IOException {
     Path testFile = Paths.get("TestClass.class");
-    this.extractSourceFile("/TestClass.class", testFile);
+    this.extractSourceFile("/TestClass.bytecode", testFile);
 
     AccessMapping mapping = Mockito.mock(AccessMapping.class);
 

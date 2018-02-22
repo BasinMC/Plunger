@@ -50,7 +50,7 @@ public class NameMappingBytecodeTransformerTest extends AbstractPlungerTest {
   @Test
   public void testExecute() throws IOException {
     Path testFile = Paths.get("TestClass.class");
-    this.extractSourceFile("/TestClass.class", testFile);
+    this.extractSourceFile("/TestClass.bytecode", testFile);
 
     ClassNameMapping classMapping = Mockito.mock(ClassNameMapping.class);
     FieldNameMapping fieldMapping = Mockito.mock(FieldNameMapping.class);

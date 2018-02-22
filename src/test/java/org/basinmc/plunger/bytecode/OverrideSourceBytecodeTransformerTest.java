@@ -46,7 +46,7 @@ public class OverrideSourceBytecodeTransformerTest extends AbstractPlungerTest {
   @Test
   public void testExecute() throws IOException {
     Path testFile = Paths.get("TestClass.class");
-    this.extractSourceFile("/TestClass.class", testFile);
+    this.extractSourceFile("/TestClass.bytecode", testFile);
 
     BytecodePlunger plunger = Plunger.bytecodeBuilder()
         .withTransformer(new OverrideSourceBytecodeTransformer("SourceFile.java", 42))

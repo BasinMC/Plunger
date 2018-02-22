@@ -39,12 +39,12 @@ public class BytecodePlungerTest extends AbstractPlungerTest {
    */
   @Test
   public void testTransform() throws IOException {
-    Path testPath = Paths.get("TestClass.class");
-    this.extractSourceFile("/TestClass.class", testPath);
+    Path testFile = Paths.get("TestClass.class");
+    this.extractSourceFile("/TestClass.bytecode", testFile);
 
     BytecodeTransformer transformer = Mockito.mock(BytecodeTransformer.class);
     Mockito.when(transformer
-        .createTransformer(Mockito.eq(testPath), Mockito.any()))
+        .createTransformer(Mockito.eq(testFile), Mockito.any()))
         .thenReturn(Optional.empty());
 
     BytecodePlunger plunger = Plunger.bytecodeBuilder()
@@ -53,12 +53,12 @@ public class BytecodePlungerTest extends AbstractPlungerTest {
     plunger.apply();
 
     Mockito.verify(transformer, Mockito.times(1))
-        .createTransformer(Mockito.eq(testPath), Mockito.any());
+        .createTransformer(Mockito.eq(testFile), Mockito.any());
 
-    Assert.assertTrue(Files.exists(this.getTarget().resolve(testPath)));
+    Assert.assertTrue(Files.exists(this.getTarget().resolve(testFile)));
 
-    byte[] expected = Files.readAllBytes(this.getSource().resolve(testPath));
-    byte[] actual = Files.readAllBytes(this.getTarget().resolve(testPath));
+    byte[] expected = Files.readAllBytes(this.getSource().resolve(testFile));
+    byte[] actual = Files.readAllBytes(this.getTarget().resolve(testFile));
 
     Assert.assertArrayEquals(expected, actual); // only works if no transformer touches the class
   }
