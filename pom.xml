@@ -71,6 +71,14 @@
     <url>https://github.com/BasinMC/Plunger/issues</url>
   </issueManagement>
 
+  <distributionManagement>
+    <repository>
+      <id>basin-bintray</id>
+      <name>Basin Releases</name>
+      <url>https://api.bintray.com/maven/basin/maven/Plunger/;publish=1</url>
+    </repository>
+  </distributionManagement>
+
   <!-- Dependencies -->
   <dependencies>
     <dependency>
