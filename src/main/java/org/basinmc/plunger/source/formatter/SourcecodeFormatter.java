@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.basinmc.plunger.source;
+package org.basinmc.plunger.source.formatter;
 
 import javax.annotation.Nonnull;
 

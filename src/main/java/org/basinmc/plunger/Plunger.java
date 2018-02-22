@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import org.basinmc.plunger.bytecode.BytecodeTransformer;
 import org.basinmc.plunger.source.SourcecodeTransformer;
-import org.basinmc.plunger.source.SourcecodeFormatter;
+import org.basinmc.plunger.source.formatter.SourcecodeFormatter;
 
 /**
  * Applies a set of pre-configured transformers to an arbitrary archive or directory of either

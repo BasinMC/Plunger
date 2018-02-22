@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import org.basinmc.plunger.source.SourcecodeTransformer;
-import org.basinmc.plunger.source.SourcecodeFormatter;
+import org.basinmc.plunger.source.formatter.SourcecodeFormatter;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaSource;
 import org.slf4j.Logger;
