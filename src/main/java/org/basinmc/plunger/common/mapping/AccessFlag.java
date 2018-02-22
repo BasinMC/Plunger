@@ -18,6 +18,8 @@ package org.basinmc.plunger.common.mapping;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.util.Objects;
+import javax.annotation.Nonnull;
+import org.objectweb.asm.Opcodes;
 
 /**
  * <p>Represents one or more access preferences which identify whether and how classes are permitted
@@ -66,6 +68,33 @@ public final class AccessFlag {
   }
 
   /**
+   * Creates a new access flag set based on the passed ASM opcode representation.
+   *
+   * @param opcode an ASM opcode.
+   * @return an access flag set.
+   */
+  @Nonnull
+  public static AccessFlag byOpcode(int opcode) {
+    int mask = 0;
+
+    if ((opcode & Opcodes.ACC_PRIVATE) == Opcodes.ACC_PRIVATE) {
+      mask |= PRIVATE.flag;
+    } else if ((opcode & Opcodes.ACC_PROTECTED) == Opcodes.ACC_PROTECTED) {
+      mask |= PROTECTED.flag;
+    } else if ((opcode & Opcodes.ACC_PUBLIC) == Opcodes.ACC_PUBLIC) {
+      mask |= PUBLIC.flag;
+    } else {
+      mask |= PACKAGE_PRIVATE.flag;
+    }
+
+    if ((opcode & Opcodes.ACC_FINAL) == Opcodes.ACC_FINAL) {
+      mask |= FINAL.flag;
+    }
+
+    return new AccessFlag(mask);
+  }
+
+  /**
    * Evaluates whether this set of flags contains all of the flags set within the passed set.
    *
    * @param value a set of flags.
@@ -83,6 +112,29 @@ public final class AccessFlag {
    */
   public boolean containsAny(@NonNull AccessFlag value) {
     return this == value || (this.flag & value.flag) != 0;
+  }
+
+  /**
+   * Converts this set of access flags into its ASM opcode representation.
+   *
+   * @return an ASM opcode.
+   */
+  public int toOpcode() {
+    int opcode = 0;
+
+    if (this.contains(PRIVATE)) {
+      opcode |= Opcodes.ACC_PRIVATE;
+    } else if (this.contains(PROTECTED)) {
+      opcode |= Opcodes.ACC_PROTECTED;
+    } else if (this.contains(PUBLIC)) {
+      opcode |= Opcodes.ACC_PUBLIC;
+    }
+
+    if (this.contains(FINAL)) {
+      opcode |= Opcodes.ACC_FINAL;
+    }
+
+    return opcode;
   }
 
   /**
