@@ -86,7 +86,7 @@ public final class ReferenceUtility {
         builder.append(";");
       }
 
-      builder.append(parameterTypes);
+      builder.append(r);
     });
 
     return "(" + builder + ")" + returnType;
@@ -178,7 +178,7 @@ public final class ReferenceUtility {
   public static String getBytecodeTypeDescription(@Nonnull String signature, int arrayDimension) {
     StringBuilder builder = new StringBuilder();
 
-    for (int i = 0; i < arrayDimension; ++i) {
+    for (int i = 1; i < arrayDimension; ++i) {
       builder.append("[");
     }
 
