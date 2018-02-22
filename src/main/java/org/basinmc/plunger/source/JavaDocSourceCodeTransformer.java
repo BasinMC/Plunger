@@ -16,20 +16,13 @@
  */
 package org.basinmc.plunger.source;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
 import java.nio.file.Path;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import org.basinmc.plunger.source.generator.JavaDocGenerator;
 import org.basinmc.plunger.source.utility.ReferenceUtility;
-import org.jboss.forge.roaster.model.JavaDocCapable;
-import org.jboss.forge.roaster.model.JavaType;
-import org.jboss.forge.roaster.model.source.FieldHolderSource;
 import org.jboss.forge.roaster.model.source.FieldSource;
-import org.jboss.forge.roaster.model.source.JavaDocCapableSource;
-import org.jboss.forge.roaster.model.source.JavaDocSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
-import org.jboss.forge.roaster.model.source.MethodHolderSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
 /**
@@ -37,7 +30,7 @@ import org.jboss.forge.roaster.model.source.MethodSource;
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
-public class JavaDocSourceCodeTransformer implements SourceCodeTransformer {
+public class JavaDocSourceCodeTransformer extends AbstractCascadingSourceCodeTransformer {
 
   private final JavaDocGenerator generator;
 
@@ -49,43 +42,33 @@ public class JavaDocSourceCodeTransformer implements SourceCodeTransformer {
    * {@inheritDoc}
    */
   @Override
-  public void transform(@NonNull Path source, @NonNull JavaSource<?> sourceType) {
-    this.transform(sourceType);
+  protected void transformType(@Nonnull Path source, @Nonnull JavaSource<?> typeSource) {
+    this.generator
+        .getClassDocumentation(
+            ReferenceUtility.getBytecodeReference(typeSource.getQualifiedName()))
+        .ifPresent((doc) -> typeSource.getJavaDoc().setFullText(doc));
   }
 
-  private void transform(@Nonnull JavaType<?> type) {
-    if (type instanceof JavaDocCapableSource) {
-      this.generator
-          .getClassDocumentation(ReferenceUtility.getBytecodeReference(type.getQualifiedName()))
-          .ifPresent(
-              (doc) -> ((JavaDocSource) ((JavaDocCapable) type).getJavaDoc()).setFullText(doc));
-    }
-
-    if (type instanceof FieldHolderSource) {
-      ((FieldHolderSource<?>) type).getFields().forEach((field) -> this.transform(
-          type.getQualifiedName(),
-          field
-      ));
-    }
-
-    if (type instanceof MethodHolderSource) {
-      ((MethodHolderSource<?>) type).getMethods().forEach((method) -> this.transform(
-          type.getQualifiedName(),
-          method
-      ));
-    }
-  }
-
-  private void transform(@Nonnull String className, @Nonnull FieldSource<?> fieldSource) {
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void transformField(@Nonnull Path source, @Nonnull JavaSource<?> typeSource,
+      @Nonnull FieldSource<?> fieldSource) {
     this.generator.getFieldDocumentation(
-        ReferenceUtility.getBytecodeReference(className),
+        ReferenceUtility.getBytecodeReference(typeSource.getQualifiedName()),
         fieldSource.getName(),
         ReferenceUtility.getBytecodeTypeDescription(fieldSource.getType().getQualifiedName(),
             fieldSource.getType().getArrayDimensions()))
         .ifPresent((doc) -> fieldSource.getJavaDoc().setFullText(doc));
   }
 
-  private void transform(@Nonnull String className, @Nonnull MethodSource<?> methodSource) {
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void transformMethod(@Nonnull Path source, @Nonnull JavaSource<?> typeSource,
+      @Nonnull MethodSource<?> methodSource) {
     String returnType = ReferenceUtility.VOID_REFERENCE;
     String name = methodSource.getName();
 
@@ -100,7 +83,7 @@ public class JavaDocSourceCodeTransformer implements SourceCodeTransformer {
     }
 
     this.generator.getMethodDocumentation(
-        ReferenceUtility.getBytecodeReference(className),
+        ReferenceUtility.getBytecodeReference(typeSource.getQualifiedName()),
         name,
         ReferenceUtility.generateBytecodeSignature(
             returnType,
