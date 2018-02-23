@@ -20,6 +20,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -409,6 +411,7 @@ public interface Plunger {
 
     private final List<SourcecodeTransformer> transformers = new ArrayList<>();
     private SourcecodeFormatter formatter = SourcecodeFormatter.noop();
+    private Charset charset = StandardCharsets.UTF_8;
 
     /**
      * {@inheritDoc}
@@ -425,8 +428,21 @@ public interface Plunger {
           this.sourceRelocation,
           this.parallelism,
           this.formatter,
+          this.charset,
           this.transformers
       );
+    }
+
+    /**
+     * Selects a specific charset to use when en- and decoding source files.
+     *
+     * @param charset a charset.
+     * @return a reference to this builder.
+     */
+    @Nonnull
+    public SourcecodeBuilder withCharset(@Nonnull Charset charset) {
+      this.charset = charset;
+      return this;
     }
 
     /**

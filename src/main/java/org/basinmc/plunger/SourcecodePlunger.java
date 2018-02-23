@@ -18,8 +18,7 @@ package org.basinmc.plunger;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
@@ -44,6 +43,7 @@ public class SourcecodePlunger extends AbstractPlunger {
 
   private final PathMatcher classMatcher;
   private final SourcecodeFormatter formatter;
+  private final Charset charset;
   private final List<SourcecodeTransformer> transformers;
 
   SourcecodePlunger(@NonNull Path source,
@@ -54,10 +54,12 @@ public class SourcecodePlunger extends AbstractPlunger {
       boolean sourceRelocation,
       boolean parallelism,
       @Nonnull SourcecodeFormatter formatter,
+      @Nonnull Charset charset,
       @Nonnull List<SourcecodeTransformer> transformers) {
     super(source, target, classInclusionVoter, transformationVoter, resourceVoter,
         sourceRelocation, parallelism);
     this.formatter = formatter;
+    this.charset = charset;
     this.transformers = new ArrayList<>(transformers);
 
     this.classMatcher = this.sourceFileSystem.getPathMatcher("glob:**.java");
@@ -135,9 +137,8 @@ public class SourcecodePlunger extends AbstractPlunger {
       // transformers
       JavaSource<?> type;
 
-      try (InputStream inputStream = Files.newInputStream(file)) {
-        type = Roaster.parse(JavaSource.class, inputStream);
-      }
+      String code = new String(Files.readAllBytes(file), this.charset);
+      type = Roaster.parse(JavaSource.class, code);
 
       for (SourcecodeTransformer transformer : this.transformers) {
         transformer.transform(source, type);
@@ -145,14 +146,13 @@ public class SourcecodePlunger extends AbstractPlunger {
 
       // reformat the code and pass it to the selected java code formatter (we generally encode
       // everything as UTF-8 since it's typically used anyways
-      // TODO: Permit overriding of charsets (low priority)
       if (this.sourceRelocation) {
         target = this.target.resolve(type.getQualifiedName().replace('.', '/') + ".java");
         logger.info("  Relocated to {}", target);
       }
 
       Files.createDirectories(target.getParent());
-      Files.write(target, this.formatter.format(type.toString()).getBytes(StandardCharsets.UTF_8));
+      Files.write(target, this.formatter.format(type.toString()).getBytes(this.charset));
       logger.info("    TRANSFORMED");
     } catch (IOException ex) {
       logger.error("    FAILED");
