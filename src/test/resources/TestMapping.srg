@@ -1,0 +1,4 @@
+PK: org/basinmc/plunger/test org/basinmc/plunger/test/mapped
+CL: org/basinmc/plunger/test/TestClass org/basinmc/plunger/mapped/test/MappedTestClass
+FD: org/basinmc/plunger/test/TestClass/testField org/basinmc/plunger/mapped/test/MappedTestClass/a
+MD: org/basinmc/plunger/test/TestClass/testMethod ()I org/basinmc/plunger/mapped/test/MappedTestClass/a ()I
