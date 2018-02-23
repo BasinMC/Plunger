@@ -313,6 +313,7 @@ public interface Plunger {
           this.transformationVoter,
           this.resourceVoter,
           this.sourceRelocation,
+          this.parallelism,
           this.transformers
       );
     }
@@ -422,6 +423,7 @@ public interface Plunger {
           this.transformationVoter,
           this.resourceVoter,
           this.sourceRelocation,
+          this.parallelism,
           this.formatter,
           this.transformers
       );
