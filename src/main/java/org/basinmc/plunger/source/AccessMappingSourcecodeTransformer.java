@@ -29,8 +29,16 @@ import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
 /**
- * Alters the access level of classes, fields and methods based on an internal set of access
- * mappings.
+ * <p>Alters the access level of classes, fields and methods based on an internal set of access
+ * mappings.</p>
+ *
+ * <p>FIXME: Implemented proper support for inner classes Source mapping does not correctly resolve
+ * inner classes at the moment due to the fact that we cannot differentiate between inner and
+ * regular classes based on the information Roaster gives us here. As such, the naming for inner
+ * classes will generally be incorrectly inferred and fail to look up correctly (e.g. should be
+ * {@code org/basinmc/plunger/test/TestClass$InnerClass} but actually is {@code
+ * org/basinmc/plunger/test/TestClass/InnerClass} as the type is accessed equally to a type nested
+ * within a package.</p>
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
