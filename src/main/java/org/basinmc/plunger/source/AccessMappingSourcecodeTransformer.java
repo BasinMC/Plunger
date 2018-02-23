@@ -29,6 +29,9 @@ import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 
 /**
+ * Alters the access level of classes, fields and methods based on an internal set of access
+ * mappings.
+ *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
 public class AccessMappingSourcecodeTransformer extends AbstractCascadingSourcecodeTransformer {
