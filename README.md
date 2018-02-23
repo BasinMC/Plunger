@@ -32,10 +32,18 @@ Usage
 **Artifact Coordinates:** `org.basinmc:plunger:1.0-SNAPSHOT`
 
 ```xml
+<repository>
+  <id>basin-bintray</id>
+  <name>Basin Releases</name>
+  <url>https://dl.bintray.com/basin/maven/</url>
+</repository>
+
+<!-- ... -->
+
 <dependency>
   <groupId>org.basinmc</groupId>
   <artifactId>plunger</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
 </dependency>
 ```
 
