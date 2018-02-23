@@ -52,10 +52,11 @@ public class SourcecodePlunger extends AbstractPlunger {
       @NonNull Predicate<Path> transformationVoter,
       @NonNull Predicate<Path> resourceVoter,
       boolean sourceRelocation,
+      boolean parallelism,
       @Nonnull SourcecodeFormatter formatter,
       @Nonnull List<SourcecodeTransformer> transformers) {
     super(source, target, classInclusionVoter, transformationVoter, resourceVoter,
-        sourceRelocation);
+        sourceRelocation, parallelism);
     this.formatter = formatter;
     this.transformers = new ArrayList<>(transformers);
 
@@ -69,7 +70,14 @@ public class SourcecodePlunger extends AbstractPlunger {
   public void apply() throws IOException {
     logger.info("Applying transformations ...");
 
-    Iterator<Path> it = Files.walk(this.source).iterator();
+    Files.createDirectories(this.target);
+    Iterator<Path> it;
+
+    if (this.parallelism) {
+      it = Files.walk(this.source).parallel().iterator();
+    } else {
+      it = Files.walk(this.source).iterator();
+    }
 
     while (it.hasNext()) {
       Path file = it.next();

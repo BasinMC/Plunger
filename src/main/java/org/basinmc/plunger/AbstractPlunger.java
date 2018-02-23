@@ -41,6 +41,7 @@ public abstract class AbstractPlunger implements Plunger {
   protected final Path target;
   protected final FileSystem targetFileSystem;
   protected final Predicate<Path> transformationVoter;
+  protected final boolean parallelism;
   protected final boolean sourceRelocation;
 
   protected AbstractPlunger(
@@ -49,7 +50,8 @@ public abstract class AbstractPlunger implements Plunger {
       @NonNull Predicate<Path> classInclusionVoter,
       @NonNull Predicate<Path> transformationVoter,
       @NonNull Predicate<Path> resourceVoter,
-      boolean sourceRelocation) {
+      boolean sourceRelocation,
+      boolean parallelism) {
     this.source = source;
     this.target = target;
 
@@ -57,6 +59,7 @@ public abstract class AbstractPlunger implements Plunger {
     this.transformationVoter = transformationVoter;
     this.resourceVoter = resourceVoter;
     this.sourceRelocation = sourceRelocation;
+    this.parallelism = parallelism;
 
     this.sourceFileSystem = source.getFileSystem();
     this.targetFileSystem = target.getFileSystem();

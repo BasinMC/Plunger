@@ -189,6 +189,7 @@ public interface Plunger {
     protected Predicate<Path> classInclusionVoter = (p) -> true;
     protected Predicate<Path> resourceVoter = (p) -> true;
     protected Predicate<Path> transformationVoter = (p) -> true;
+    protected boolean parallelism;
     protected boolean sourceRelocation = true;
 
     /**
@@ -211,6 +212,31 @@ public interface Plunger {
     @NonNull
     public Builder withClassInclusionVoter(@NonNull Predicate<Path> voter) {
       this.classInclusionVoter = voter;
+      return this;
+    }
+
+    /**
+     * @see #withParallelism(boolean)
+     */
+    @Nonnull
+    public Builder withParallelism() {
+      return this.withParallelism(true);
+    }
+
+    /**
+     * <p>Selects whether or not parallelism is desired (e.g. whether source files may be processed
+     * on separate threads).</p>
+     *
+     * <p>Note that all transformers within the project are required to be thread safe in order for
+     * parallel execution to work correctly (the visitors provided by bytecode transformers may,
+     * however, be unsafe as they are ever invoked on more than one source file at a time).</p>
+     *
+     * @param value true if parallel execution is desired, false otherwise.
+     * @return a reference to this builder.
+     */
+    @Nonnull
+    public Builder withParallelism(boolean value) {
+      this.parallelism = value;
       return this;
     }
 
@@ -298,6 +324,26 @@ public interface Plunger {
     @Override
     public BytecodeBuilder withClassInclusionVoter(@NonNull Predicate<Path> voter) {
       super.withClassInclusionVoter(voter);
+      return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Nonnull
+    @Override
+    public BytecodeBuilder withParallelism() {
+      super.withParallelism();
+      return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Nonnull
+    @Override
+    public BytecodeBuilder withParallelism(boolean value) {
+      super.withParallelism(value);
       return this;
     }
 
@@ -401,6 +447,26 @@ public interface Plunger {
     @Nonnull
     public SourcecodeBuilder withFormatter(@Nonnull SourcecodeFormatter formatter) {
       this.formatter = formatter;
+      return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Nonnull
+    @Override
+    public SourcecodeBuilder withParallelism() {
+      super.withParallelism();
+      return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Nonnull
+    @Override
+    public SourcecodeBuilder withParallelism(boolean value) {
+      super.withParallelism(value);
       return this;
     }
 

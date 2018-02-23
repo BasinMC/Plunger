@@ -60,9 +60,10 @@ public class BytecodePlunger extends AbstractPlunger {
       @NonNull Predicate<Path> transformationVoter,
       @NonNull Predicate<Path> resourceVoter,
       boolean sourceRelocation,
+      boolean parallelism,
       @NonNull List<BytecodeTransformer> transformers) {
     super(source, target, classInclusionVoter, transformationVoter, resourceVoter,
-        sourceRelocation);
+        sourceRelocation, parallelism);
     this.transformers = new ArrayList<>(transformers);
 
     // since we do not know with which FileSystem we'll be dealing with, we'll have to initialize
@@ -78,7 +79,13 @@ public class BytecodePlunger extends AbstractPlunger {
     logger.info("Applying transformations ...");
 
     Files.createDirectories(this.target);
-    Iterator<Path> it = Files.walk(this.source).iterator();
+    Iterator<Path> it;
+
+    if (this.parallelism) {
+      it = Files.walk(this.source).parallel().iterator();
+    } else {
+      it = Files.walk(this.source).iterator();
+    }
 
     while (it.hasNext()) {
       Path file = it.next();
