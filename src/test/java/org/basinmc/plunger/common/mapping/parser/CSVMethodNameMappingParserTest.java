@@ -35,7 +35,6 @@ public class CSVMethodNameMappingParserTest {
   @Test
   public void testMap() throws IOException {
     CSVMethodNameMappingParser parser = CSVMethodNameMappingParser.builder()
-        .withFormat(CSVFormat.DEFAULT.withFirstRecordAsHeader())
         .withClassNameColumn("enclosingClass")
         .withSignatureColumn("signature")
         .build("original", "target");

@@ -116,7 +116,8 @@ public abstract class AbstractCSVMappingParser<M> {
    */
   public abstract static class Builder {
 
-    protected CSVFormat format = CSVFormat.DEFAULT;
+    protected CSVFormat format = CSVFormat.DEFAULT
+        .withFirstRecordAsHeader();
 
     /**
      * Selects a CSV format to rely upon when parsing file or stream contents.

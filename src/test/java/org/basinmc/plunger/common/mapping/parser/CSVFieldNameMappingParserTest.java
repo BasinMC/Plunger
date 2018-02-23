@@ -37,7 +37,6 @@ public class CSVFieldNameMappingParserTest {
   @Test
   public void testMap() throws IOException {
     CSVFieldNameMappingParser parser = CSVFieldNameMappingParser.builder()
-        .withFormat(CSVFormat.DEFAULT.withFirstRecordAsHeader())
         .withClassNameColumn("enclosingClass")
         .withSignatureColumn("signature")
         .build("original", "target");

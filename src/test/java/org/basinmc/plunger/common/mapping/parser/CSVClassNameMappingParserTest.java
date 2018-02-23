@@ -37,7 +37,6 @@ public class CSVClassNameMappingParserTest {
   @Test
   public void testMap() throws IOException {
     CSVClassNameMappingParser parser = CSVClassNameMappingParser.builder()
-        .withFormat(CSVFormat.DEFAULT.withFirstRecordAsHeader())
         .build("original", "target");
 
     try (InputStream inputStream = this.getClass().getResourceAsStream("/csv/ClassMapping.csv")) {
