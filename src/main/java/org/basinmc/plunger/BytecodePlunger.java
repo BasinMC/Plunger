@@ -260,10 +260,6 @@ public class BytecodePlunger extends AbstractPlunger {
 
     private String className;
 
-    private ClassNameExtractorVisitor() {
-      super(Opcodes.ASM6);
-    }
-
     private ClassNameExtractorVisitor(@Nonnull ClassVisitor classVisitor) {
       super(Opcodes.ASM6, classVisitor);
     }
