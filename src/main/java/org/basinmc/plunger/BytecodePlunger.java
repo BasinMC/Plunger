@@ -19,17 +19,24 @@ package org.basinmc.plunger;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
 import java.nio.file.StandardOpenOption;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import org.basinmc.plunger.bytecode.BytecodeTransformer;
 import org.basinmc.plunger.bytecode.DelegatingClassVisitor;
@@ -48,6 +55,7 @@ import org.slf4j.LoggerFactory;
  */
 public class BytecodePlunger extends AbstractPlunger {
 
+  private static final Pattern NEWLINE_PATTERN = Pattern.compile("\r?\n");
   private static final Logger logger = LoggerFactory.getLogger(BytecodePlunger.class);
 
   private final PathMatcher bytecodeMatcher;
@@ -79,31 +87,67 @@ public class BytecodePlunger extends AbstractPlunger {
     logger.info("Applying transformations ...");
 
     Files.createDirectories(this.target);
-    Iterator<Path> it;
+    Stream<Path> stream;
 
     if (this.parallelism) {
-      it = Files.walk(this.source).parallel().iterator();
+      stream = Files.walk(this.source).parallel();
     } else {
-      it = Files.walk(this.source).iterator();
+      stream = Files.walk(this.source);
     }
 
-    while (it.hasNext()) {
-      Path file = it.next();
+    Map<Path, IOException> failedExecutions = stream
+        .flatMap((file) -> {
+          try {
+            // relativize the class path first so that we can resolve its target name easily
+            Path source = this.source.relativize(file);
+            Path target = this.target.resolve(source.toString());
 
-      // relativize the class path first so that we can resolve its target name easily
-      Path source = this.source.relativize(file);
-      Path target = this.target.resolve(source.toString());
+            if (Files.isDirectory(file)) {
+              Files.createDirectories(target);
+              return Stream.empty();
+            }
 
-      if (Files.isDirectory(file)) {
-        Files.createDirectories(target);
-        continue;
-      }
+            if (this.bytecodeMatcher.matches(file)) {
+              this.processClass(file, source, target);
+            } else {
+              this.processResource(file, source, target);
+            }
 
-      if (this.bytecodeMatcher.matches(file)) {
-        this.processClass(file, source, target);
-      } else {
-        this.processResource(file, source, target);
-      }
+            return Stream.empty();
+          } catch (IOException ex) {
+            return Stream.of(new SimpleImmutableEntry<>(file, ex));
+          }
+        })
+        .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+
+    // generate an exception which tells the user which exact files failed (with a hint to check the
+    // log for more details)
+    if (!failedExecutions.isEmpty()) {
+      StringBuilder builder = new StringBuilder("One or more files failed to process:");
+      builder.append(System.lineSeparator());
+
+      failedExecutions.forEach((f, e) -> {
+        builder.append(" * ");
+        builder.append(f);
+        builder.append(System.lineSeparator());
+        builder.append("   Message: ").append(e.getMessage());
+        builder.append(System.lineSeparator());
+        builder.append("   Stacktrace: ");
+
+        try (StringWriter writer = new StringWriter()) {
+          try (PrintWriter printWriter = new PrintWriter(writer)) {
+            e.printStackTrace(printWriter);
+          }
+
+          for (String line : NEWLINE_PATTERN.split(writer.toString())) {
+            builder.append("     ").append(line).append(System.lineSeparator());
+          }
+        } catch (IOException ex) {
+          builder.append("Unavailable: ").append(ex.getMessage());
+        }
+      });
+
+      throw new IOException(builder.toString());
     }
 
     logger.info("Successfully applied transformations to all qualifying source files");
