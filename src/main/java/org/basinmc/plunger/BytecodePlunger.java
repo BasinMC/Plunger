@@ -196,9 +196,10 @@ public class BytecodePlunger extends AbstractPlunger {
       // we'll simply use a delegation class visitor here
       DelegatingClassVisitor chainStart = new DelegatingClassVisitor();
       DelegatingClassVisitor previousVisitor = chainStart;
-      DelegatingClassVisitor nextVisitor = new DelegatingClassVisitor();
+      DelegatingClassVisitor nextVisitor = null;
 
       for (BytecodeTransformer transformer : this.transformers) {
+        nextVisitor = new DelegatingClassVisitor();
         ClassVisitor visitor = transformer.createTransformer(source, nextVisitor)
             .orElse(null);
 
@@ -221,6 +222,8 @@ public class BytecodePlunger extends AbstractPlunger {
       // transformation
       ClassWriter writer = new ClassWriter(0);
       ClassNameExtractorVisitor extractorVisitor = new ClassNameExtractorVisitor(writer);
+
+      assert nextVisitor != null;
       nextVisitor.setVisitor(extractorVisitor);
 
       try (InputStream inputStream = Files.newInputStream(file)) {
