@@ -176,7 +176,7 @@ public class BytecodePlunger extends AbstractPlunger {
 
       // if we've been given a full chain of transformers, we'll construct our writer and begin the
       // transformation
-      ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
+      ClassWriter writer = new ClassWriter(0);
       ClassNameExtractorVisitor extractorVisitor = new ClassNameExtractorVisitor(writer);
       nextVisitor.setVisitor(extractorVisitor);
 
