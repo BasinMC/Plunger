@@ -103,9 +103,10 @@ public class BytecodePlunger extends AbstractPlunger {
             Path target = this.target.resolve(source.toString());
 
             if (Files.isDirectory(file)) {
-              Files.createDirectories(target);
               return Stream.empty();
             }
+
+            Files.createDirectories(target.getParent());
 
             if (this.bytecodeMatcher.matches(file)) {
               this.processClass(file, source, target);
