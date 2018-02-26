@@ -60,7 +60,7 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
      * {@inheritDoc}
      */
     @Override
-    public String mapType(String type) {
+    public String map(@NonNull String type) {
       return NameMappingBytecodeTransformer.this.mapping.getClassName(type)
           .orElse(type);
     }

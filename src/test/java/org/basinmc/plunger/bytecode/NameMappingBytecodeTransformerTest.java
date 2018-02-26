@@ -78,11 +78,11 @@ public class NameMappingBytecodeTransformerTest extends AbstractPlungerTest {
         .build(this.getSource(), this.getTarget());
     plunger.apply();
 
-    Mockito.verify(classMapping, Mockito.times(10))
+    Mockito.verify(classMapping, Mockito.atLeastOnce())
         .getClassName("org/basinmc/plunger/test/TestClass");
-    Mockito.verify(fieldMapping, Mockito.times(2))
+    Mockito.verify(fieldMapping, Mockito.atLeastOnce())
         .getFieldName("org/basinmc/plunger/mapped/test/MappedTestClass", "testField", "I");
-    Mockito.verify(methodMapping, Mockito.times(2))
+    Mockito.verify(methodMapping, Mockito.atLeastOnce())
         .getMethodName("org/basinmc/plunger/mapped/test/MappedTestClass", "testMethod", "()I");
 
     ClassNode node = new ClassNode();
