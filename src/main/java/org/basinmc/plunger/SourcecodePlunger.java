@@ -86,7 +86,7 @@ public class SourcecodePlunger extends AbstractPlunger {
 
       // relativize the class path first so that we can resolve its target name easily
       Path source = this.source.relativize(file);
-      Path target = this.target.resolve(source);
+      Path target = this.target.resolve(source.toString());
 
       if (Files.isDirectory(file)) {
         Files.createDirectories(target);
