@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
@@ -55,7 +54,6 @@ import org.slf4j.LoggerFactory;
  */
 public class BytecodePlunger extends AbstractPlunger {
 
-  private static final Pattern NEWLINE_PATTERN = Pattern.compile("\r?\n");
   private static final Logger logger = LoggerFactory.getLogger(BytecodePlunger.class);
 
   private final PathMatcher bytecodeMatcher;

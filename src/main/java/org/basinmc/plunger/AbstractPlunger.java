@@ -22,6 +22,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,9 @@ import org.slf4j.LoggerFactory;
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
 public abstract class AbstractPlunger implements Plunger {
+
   private final Logger logger = LoggerFactory.getLogger(this.getClass());
+  protected static final Pattern NEWLINE_PATTERN = Pattern.compile("\r?\n");
 
   protected final Predicate<Path> classInclusionVoter;
   protected final Predicate<Path> resourceVoter;

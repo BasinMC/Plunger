@@ -18,14 +18,21 @@ package org.basinmc.plunger;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.PathMatcher;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import org.basinmc.plunger.source.SourcecodeTransformer;
 import org.basinmc.plunger.source.formatter.SourcecodeFormatter;
@@ -73,6 +80,70 @@ public class SourcecodePlunger extends AbstractPlunger {
     logger.info("Applying transformations ...");
 
     Files.createDirectories(this.target);
+
+    Stream<Path> stream;
+    if (this.parallelism) {
+      stream = Files.walk(this.source).parallel();
+    } else {
+      stream = Files.walk(this.source);
+    }
+
+    Map<Path, IOException> failedExecutions = stream
+        .flatMap((file) -> {
+          try {
+            // relativize the class path first so that we can resolve its target name easily
+            Path source = this.source.relativize(file);
+            Path target = this.target.resolve(source.toString());
+
+            if (Files.isDirectory(file)) {
+              return Stream.empty();
+            }
+
+            Files.createDirectories(target.getParent());
+
+            if (this.classMatcher.matches(file)) {
+              this.processSourceFile(file, source, target);
+            } else {
+              this.processResource(file, source, target);
+            }
+
+            return Stream.empty();
+          } catch (IOException ex) {
+            return Stream.of(new SimpleImmutableEntry<>(file, ex));
+          }
+        })
+        .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+
+    // generate an exception which tells the user which exact files failed (with a hint to check the
+    // log for more details)
+    if (!failedExecutions.isEmpty()) {
+      StringBuilder builder = new StringBuilder("One or more files failed to process:");
+      builder.append(System.lineSeparator());
+
+      failedExecutions.forEach((f, e) -> {
+        builder.append(" * ");
+        builder.append(f);
+        builder.append(System.lineSeparator());
+        builder.append("   Message: ").append(e.getMessage());
+        builder.append(System.lineSeparator());
+        builder.append("   Stacktrace: ");
+
+        try (StringWriter writer = new StringWriter()) {
+          try (PrintWriter printWriter = new PrintWriter(writer)) {
+            e.printStackTrace(printWriter);
+          }
+
+          for (String line : NEWLINE_PATTERN.split(writer.toString())) {
+            builder.append("     ").append(line).append(System.lineSeparator());
+          }
+        } catch (IOException ex) {
+          builder.append("Unavailable: ").append(ex.getMessage());
+        }
+      });
+
+      throw new IOException(builder.toString());
+    }
+
     Iterator<Path> it;
 
     if (this.parallelism) {
@@ -83,22 +154,6 @@ public class SourcecodePlunger extends AbstractPlunger {
 
     while (it.hasNext()) {
       Path file = it.next();
-
-      // relativize the class path first so that we can resolve its target name easily
-      Path source = this.source.relativize(file);
-      Path target = this.target.resolve(source.toString());
-
-      if (Files.isDirectory(file)) {
-        continue;
-      }
-
-      Files.createDirectories(target.getParent());
-
-      if (this.classMatcher.matches(file)) {
-        this.processSourceFile(file, source, target);
-      } else {
-        this.processResource(file, source, target);
-      }
     }
 
     logger.info("Successfully applied transformations to all qualifying source files");
