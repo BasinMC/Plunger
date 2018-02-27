@@ -55,7 +55,7 @@ Path source = ...;
 Path target = ...;
 AccessMapping mapping = ...;
 
-Plunger plunger = Plunger.bytecodeBuilder()
+Plunger plunger = BytecodePlunger.builder()
   .withTransformer(new AccessMappingBytecodeTransformer(mapping))
   .build(source, target);
 
