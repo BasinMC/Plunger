@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.basinmc.plunger.common.mapping.ParameterNameMapping;
@@ -44,7 +43,7 @@ public final class CSVParameterNameMappingParser extends
   private final String targetNameColumn;
 
   CSVParameterNameMappingParser(
-      @Nonnull CSVFormat format,
+      @NonNull CSVFormat format,
       @Nullable String classNameColumn,
       @Nullable String methodNameColumn,
       @Nullable String signatureColumn,
@@ -67,10 +66,20 @@ public final class CSVParameterNameMappingParser extends
   }
 
   /**
+   * Constructs a new empty factory for parameter name mapping instances.
+   *
+   * @return a factory.
+   */
+  @NonNull
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  /**
    * {@inheritDoc}
    */
   @Override
-  protected ParameterNameMapping doParse(@Nonnull CSVParser parser) throws IOException {
+  protected ParameterNameMapping doParse(@NonNull CSVParser parser) throws IOException {
     ParameterNameMappingImpl mapping = new ParameterNameMappingImpl(
         this.parameterNameColumn != null);
     mapping.entries.addAll(
@@ -87,6 +96,123 @@ public final class CSVParameterNameMappingParser extends
             .collect(Collectors.toSet())
     );
     return mapping;
+  }
+
+  /**
+   * Provides a factory for parameter name mapping parser instances.
+   */
+  public static final class Builder extends AbstractCSVMappingParser.MemberBuilder {
+
+    private String methodNameColumn;
+    private String signatureColumn;
+    private String parameterNameColumn;
+    private String parameterIndexColumn;
+
+    private Builder() {
+    }
+
+    /**
+     * Constructs a new CSV parameter name mapping parser based on the current builder
+     * configuration.
+     *
+     * @param targetNameColumn a target name column index.
+     * @return a name mapping parser.
+     * @throws IllegalStateException when neither parameterNameColumn or parameterIndexColumn are
+     * defined.
+     */
+    @NonNull
+    public CSVParameterNameMappingParser build(@NonNull String targetNameColumn) {
+      if (this.parameterNameColumn == null && this.parameterIndexColumn == null) {
+        throw new IllegalStateException(
+            "Illegal configuration: Either of parameterNameColumn or parameterIndexColumn needs to be defined");
+      }
+
+      return new CSVParameterNameMappingParser(
+          this.format,
+          this.classNameColumn,
+          this.methodNameColumn,
+          this.signatureColumn,
+          this.parameterNameColumn,
+          this.parameterIndexColumn,
+          targetNameColumn
+      );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @NonNull
+    @Override
+    public Builder withFormat(@NonNull CSVFormat format) {
+      super.withFormat(format);
+      return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @NonNull
+    @Override
+    public Builder withClassNameColumn(@Nullable String columnName) {
+      super.withClassNameColumn(columnName);
+      return this;
+    }
+
+    /**
+     * <p>Selects the column in which the method name will be found.</p>
+     *
+     * <p>If none is specified (e.g. this method is not called at all or null is passed), the
+     * resulting mapper will only evaluate whether or not the method name, class name and parameter
+     * name/index match (assuming that a class name and signature name index was configured).</p>
+     *
+     * @param columnName a column index.
+     * @return a reference to this builder.
+     */
+    @NonNull
+    public Builder withMethodNameColumn(@Nullable String columnName) {
+      this.methodNameColumn = columnName;
+      return this;
+    }
+
+    /**
+     * Selects the column in which the original parameter index will be found.
+     *
+     * @param columnName a column index.
+     * @return a reference to this builder.
+     */
+    @NonNull
+    public Builder withParameterIndexColumn(@Nullable String columnName) {
+      this.parameterIndexColumn = columnName;
+      return this;
+    }
+
+    /**
+     * Selects the column in which the original parameter name will be found.
+     *
+     * @param columnName a column index.
+     * @return a reference to this builder.
+     */
+    @NonNull
+    public Builder withParameterNameColumn(@Nullable String columnName) {
+      this.parameterNameColumn = columnName;
+      return this;
+    }
+
+    /**
+     * <p>Selects the column in which the ASM signature for the method will be found.</p>
+     *
+     * <p>If none is specified (e.g. this method is not called at all or null is passed), the
+     * resulting mapper will only evaluate whether or not the method name and class name match
+     * (assuming that a class name index was configured).</p>
+     *
+     * @param columnName a column index.
+     * @return a reference to this builder.
+     */
+    @NonNull
+    public Builder withSignatureColumn(@Nullable String columnName) {
+      this.signatureColumn = columnName;
+      return this;
+    }
   }
 
   /**
@@ -192,7 +318,7 @@ public final class CSVParameterNameMappingParser extends
       }
 
       assert this.parameterIndex != null;
-      return this.parameterIndex != parameterIndex;
+      return this.parameterIndex == parameterIndex;
     }
   }
 }
