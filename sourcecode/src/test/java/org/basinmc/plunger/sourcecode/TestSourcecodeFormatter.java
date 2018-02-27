@@ -18,7 +18,6 @@ package org.basinmc.plunger.sourcecode;
 
 import javax.annotation.Nonnull;
 import org.basinmc.plunger.sourcecode.formatter.GoogleSourcecodeFormatter;
-import org.basinmc.plunger.sourcecode.formatter.GoogleSourcecodeFormatter;
 
 /**
  * Switches CRLF with LF line endings.

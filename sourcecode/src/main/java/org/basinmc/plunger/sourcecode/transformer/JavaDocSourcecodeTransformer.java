@@ -21,8 +21,6 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import org.basinmc.plunger.sourcecode.generator.JavaDocGenerator;
 import org.basinmc.plunger.sourcecode.utility.ReferenceUtility;
-import org.basinmc.plunger.sourcecode.generator.JavaDocGenerator;
-import org.basinmc.plunger.sourcecode.utility.ReferenceUtility;
 import org.jboss.forge.roaster.model.Type;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
@@ -39,17 +37,6 @@ public class JavaDocSourcecodeTransformer extends AbstractCascadingSourcecodeTra
 
   public JavaDocSourcecodeTransformer(@Nonnull JavaDocGenerator generator) {
     this.generator = generator;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  protected void transformType(@Nonnull Path source, @Nonnull JavaSource<?> typeSource) {
-    this.generator
-        .getClassDocumentation(
-            ReferenceUtility.getBytecodeReference(typeSource.getQualifiedName()))
-        .ifPresent((doc) -> typeSource.getJavaDoc().setFullText(doc));
   }
 
   /**
@@ -105,5 +92,16 @@ public class JavaDocSourcecodeTransformer extends AbstractCascadingSourcecodeTra
                 .collect(Collectors.toList())
         ))
         .ifPresent((doc) -> methodSource.getJavaDoc().setFullText(doc));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected void transformType(@Nonnull Path source, @Nonnull JavaSource<?> typeSource) {
+    this.generator
+        .getClassDocumentation(
+            ReferenceUtility.getBytecodeReference(typeSource.getQualifiedName()))
+        .ifPresent((doc) -> typeSource.getJavaDoc().setFullText(doc));
   }
 }

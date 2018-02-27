@@ -37,10 +37,10 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
-import org.basinmc.plunger.bytecode.transformer.BytecodeTransformer;
-import org.basinmc.plunger.bytecode.transformer.DelegatingClassVisitor;
 import org.basinmc.plunger.AbstractPlunger;
 import org.basinmc.plunger.Plunger;
+import org.basinmc.plunger.bytecode.transformer.BytecodeTransformer;
+import org.basinmc.plunger.bytecode.transformer.DelegatingClassVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
@@ -338,6 +338,16 @@ public final class BytecodePlunger extends AbstractPlunger {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @Override
+    public Builder withSourceRelocation(boolean value) {
+      super.withSourceRelocation(value);
+      return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @NonNull
     @Override
     public Builder withTransformationVoter(@NonNull Predicate<Path> voter) {
@@ -364,16 +374,6 @@ public final class BytecodePlunger extends AbstractPlunger {
     @Override
     public Builder withoutResources() {
       super.withoutResources();
-      return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Nonnull
-    @Override
-    public Builder withSourceRelocation(boolean value) {
-      super.withSourceRelocation(value);
       return this;
     }
   }

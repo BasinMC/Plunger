@@ -73,6 +73,15 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
      * {@inheritDoc}
      */
     @Override
+    public String mapFieldName(String owner, String name, String desc) {
+      return NameMappingBytecodeTransformer.this.mapping.getFieldName(owner, name, desc)
+          .orElse(name);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String mapMethodName(String owner, String name, String desc) {
       // since we cannot actually map the names of constructors, we'll simply skip them entirely
       // here to prevent any issues due to badly designed mapping implementations
@@ -81,15 +90,6 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
       }
 
       return NameMappingBytecodeTransformer.this.mapping.getMethodName(owner, name, desc)
-          .orElse(name);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String mapFieldName(String owner, String name, String desc) {
-      return NameMappingBytecodeTransformer.this.mapping.getFieldName(owner, name, desc)
           .orElse(name);
     }
   }
@@ -135,8 +135,8 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
   private final class ParameterNameMethodVisitor extends MethodVisitor {
 
     private final String className;
-    private final String methodName;
     private final String descriptor;
+    private final String methodName;
     private int parameterIndex;
 
     private ParameterNameMethodVisitor(

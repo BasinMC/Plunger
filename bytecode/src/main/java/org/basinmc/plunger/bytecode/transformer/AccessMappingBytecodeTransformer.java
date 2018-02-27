@@ -41,16 +41,6 @@ public class AccessMappingBytecodeTransformer implements BytecodeTransformer {
     this.accessMapping = accessMapping;
   }
 
-  /**
-   * {@inheritDoc}
-   */
-  @Nonnull
-  @Override
-  public Optional<ClassVisitor> createTransformer(@NonNull Path source,
-      @NonNull ClassVisitor nextVisitor) {
-    return Optional.of(new AccessOverrideClassVisitor(nextVisitor));
-  }
-
   @NonNull
   private static AccessFlag byOpcode(int opcode) {
     AccessFlag flag = AccessFlag.PACKAGE_PRIVATE;
@@ -86,6 +76,16 @@ public class AccessMappingBytecodeTransformer implements BytecodeTransformer {
     }
 
     return opcode;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Nonnull
+  @Override
+  public Optional<ClassVisitor> createTransformer(@NonNull Path source,
+      @NonNull ClassVisitor nextVisitor) {
+    return Optional.of(new AccessOverrideClassVisitor(nextVisitor));
   }
 
   /**

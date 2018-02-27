@@ -22,8 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import org.basinmc.plunger.sourcecode.transformer.SourcecodeTransformer;
-import org.basinmc.plunger.sourcecode.TestSourcecodeFormatter;
-import org.basinmc.plunger.sourcecode.SourcecodePlunger;
 import org.basinmc.plunger.test.AbstractPlungerTest;
 import org.junit.Assert;
 import org.junit.Test;

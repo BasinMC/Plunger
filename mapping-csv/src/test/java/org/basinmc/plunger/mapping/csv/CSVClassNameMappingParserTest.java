@@ -19,8 +19,6 @@ package org.basinmc.plunger.mapping.csv;
 import java.io.IOException;
 import java.io.InputStream;
 import org.basinmc.plunger.mapping.ClassNameMapping;
-import org.basinmc.plunger.mapping.csv.CSVClassNameMappingParser;
-import org.basinmc.plunger.mapping.ClassNameMapping;
 import org.junit.Assert;
 import org.junit.Test;
 

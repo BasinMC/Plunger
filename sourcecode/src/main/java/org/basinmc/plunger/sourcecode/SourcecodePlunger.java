@@ -39,11 +39,6 @@ import org.basinmc.plunger.AbstractPlunger;
 import org.basinmc.plunger.Plunger;
 import org.basinmc.plunger.sourcecode.formatter.SourcecodeFormatter;
 import org.basinmc.plunger.sourcecode.transformer.SourcecodeTransformer;
-import org.basinmc.plunger.AbstractPlunger;
-import org.basinmc.plunger.Plunger;
-import org.basinmc.plunger.Plunger.Builder;
-import org.basinmc.plunger.sourcecode.formatter.SourcecodeFormatter;
-import org.basinmc.plunger.sourcecode.transformer.SourcecodeTransformer;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaSource;
 import org.slf4j.Logger;
@@ -55,10 +50,9 @@ import org.slf4j.LoggerFactory;
 public final class SourcecodePlunger extends AbstractPlunger {
 
   private static final Logger logger = LoggerFactory.getLogger(SourcecodePlunger.class);
-
+  private final Charset charset;
   private final PathMatcher classMatcher;
   private final SourcecodeFormatter formatter;
-  private final Charset charset;
   private final List<SourcecodeTransformer> transformers;
 
   private SourcecodePlunger(@NonNull Path source,
@@ -242,8 +236,8 @@ public final class SourcecodePlunger extends AbstractPlunger {
   public static final class Builder extends Plunger.Builder {
 
     private final List<SourcecodeTransformer> transformers = new ArrayList<>();
-    private SourcecodeFormatter formatter = SourcecodeFormatter.noop();
     private Charset charset = StandardCharsets.UTF_8;
+    private SourcecodeFormatter formatter = SourcecodeFormatter.noop();
 
     private Builder() {
     }
@@ -336,6 +330,16 @@ public final class SourcecodePlunger extends AbstractPlunger {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
+    @Override
+    public Builder withSourceRelocation(boolean value) {
+      super.withSourceRelocation(value);
+      return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @NonNull
     @Override
     public Builder withTransformationVoter(@NonNull Predicate<Path> voter) {
@@ -362,16 +366,6 @@ public final class SourcecodePlunger extends AbstractPlunger {
     @Override
     public Builder withoutResources() {
       super.withoutResources();
-      return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Nonnull
-    @Override
-    public Builder withSourceRelocation(boolean value) {
-      super.withSourceRelocation(value);
       return this;
     }
   }

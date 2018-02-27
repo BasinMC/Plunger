@@ -57,14 +57,14 @@ public abstract class AbstractCascadingSourcecodeTransformer implements Sourceco
     }
   }
 
-  protected void transformType(@Nonnull Path source, @Nonnull JavaSource<?> typeSource) {
-  }
-
   protected void transformField(@Nonnull Path source, @Nonnull JavaSource<?> typeSource,
       @Nonnull FieldSource<?> fieldSource) {
   }
 
   protected void transformMethod(@Nonnull Path source, @Nonnull JavaSource<?> typeSource,
       @Nonnull MethodSource<?> methodSource) {
+  }
+
+  protected void transformType(@Nonnull Path source, @Nonnull JavaSource<?> typeSource) {
   }
 }

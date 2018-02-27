@@ -33,8 +33,8 @@ import org.objectweb.asm.Opcodes;
  */
 public class OverrideSourceBytecodeTransformer implements BytecodeTransformer {
 
-  private final String source;
   private final Integer line;
+  private final String source;
 
   public OverrideSourceBytecodeTransformer(@Nullable String source, @Nullable Integer line) {
     if (source == null && line == null) {

@@ -19,7 +19,6 @@ package org.basinmc.plunger.mapping.csv;
 import java.io.IOException;
 import java.io.InputStream;
 import org.basinmc.plunger.mapping.MethodNameMapping;
-import org.basinmc.plunger.mapping.csv.CSVMethodNameMappingParser;
 import org.junit.Assert;
 import org.junit.Test;
 

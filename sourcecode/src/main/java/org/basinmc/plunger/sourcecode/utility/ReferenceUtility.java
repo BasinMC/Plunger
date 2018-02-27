@@ -34,6 +34,14 @@ import javax.annotation.Nonnull;
 public final class ReferenceUtility {
 
   /**
+   * Defines the bytecode name for class constructors.
+   */
+  public static final String CONSTRUCTOR_NAME = "<init>";
+  /**
+   * Defines a reference to the void type.
+   */
+  public static final String VOID_REFERENCE = "V";
+  /**
    * Provides a map which converts the names of primitives into their respective Bytecode names.
    */
   private static final Map<String, Character> PRIMITIVE_REFERENCE_MAP = Stream.of(
@@ -47,23 +55,12 @@ public final class ReferenceUtility {
       new SimpleImmutableEntry<>("boolean", 'Z'),
       new SimpleImmutableEntry<>("void", 'V')
   ).collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-
   /**
    * Provides a map which converts the Bytecode names to their respective language names.
    */
   private static final Map<Character, String> REVERSE_PRIMITIVE_REFERENCE_MAP =
       PRIMITIVE_REFERENCE_MAP.entrySet().stream()
           .collect(Collectors.toMap(Entry::getValue, Entry::getKey));
-
-  /**
-   * Defines the bytecode name for class constructors.
-   */
-  public static final String CONSTRUCTOR_NAME = "<init>";
-
-  /**
-   * Defines a reference to the void type.
-   */
-  public static final String VOID_REFERENCE = "V";
 
   private ReferenceUtility() {
   }

@@ -35,10 +35,10 @@ import org.objectweb.asm.Opcodes;
  */
 public class DebugAttributeBytecodeTransformer implements BytecodeTransformer {
 
-  private final boolean removeSourceCode;
-  private final boolean removeLineNumber;
   private final boolean removeGenerics;
+  private final boolean removeLineNumber;
   private final boolean removeLocalVariableTable;
+  private final boolean removeSourceCode;
 
   public DebugAttributeBytecodeTransformer(
       boolean removeSourceCode,

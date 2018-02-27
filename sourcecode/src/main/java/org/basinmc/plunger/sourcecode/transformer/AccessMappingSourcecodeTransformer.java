@@ -23,7 +23,6 @@ import javax.annotation.Nonnull;
 import org.basinmc.plunger.mapping.AccessFlag;
 import org.basinmc.plunger.mapping.AccessMapping;
 import org.basinmc.plunger.sourcecode.utility.ReferenceUtility;
-import org.basinmc.plunger.sourcecode.utility.ReferenceUtility;
 import org.jboss.forge.roaster.model.FinalCapable;
 import org.jboss.forge.roaster.model.Visibility;
 import org.jboss.forge.roaster.model.source.FieldSource;

@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.basinmc.plunger.mapping.ParameterNameMapping;
-import org.basinmc.plunger.mapping.ParameterNameMapping;
 
 /**
  * Provides a parser for CSV based parameter name mappings.
@@ -38,9 +37,9 @@ public final class CSVParameterNameMappingParser extends
 
   private final String classNameColumn;
   private final String methodNameColumn;
-  private final String signatureColumn;
-  private final String parameterNameColumn;
   private final String parameterIndexColumn;
+  private final String parameterNameColumn;
+  private final String signatureColumn;
   private final String targetNameColumn;
 
   CSVParameterNameMappingParser(
@@ -105,9 +104,9 @@ public final class CSVParameterNameMappingParser extends
   public static final class Builder extends AbstractCSVMappingParser.MemberBuilder {
 
     private String methodNameColumn;
-    private String signatureColumn;
-    private String parameterNameColumn;
     private String parameterIndexColumn;
+    private String parameterNameColumn;
+    private String signatureColumn;
 
     private Builder() {
     }
@@ -144,8 +143,8 @@ public final class CSVParameterNameMappingParser extends
      */
     @NonNull
     @Override
-    public Builder withFormat(@NonNull CSVFormat format) {
-      super.withFormat(format);
+    public Builder withClassNameColumn(@Nullable String columnName) {
+      super.withClassNameColumn(columnName);
       return this;
     }
 
@@ -154,8 +153,8 @@ public final class CSVParameterNameMappingParser extends
      */
     @NonNull
     @Override
-    public Builder withClassNameColumn(@Nullable String columnName) {
-      super.withClassNameColumn(columnName);
+    public Builder withFormat(@NonNull CSVFormat format) {
+      super.withFormat(format);
       return this;
     }
 
@@ -217,6 +216,63 @@ public final class CSVParameterNameMappingParser extends
   }
 
   /**
+   * Represents a single parsed parameter name entry.
+   */
+  private static final class ParameterNameMappingEntry {
+
+    private final String className;
+    private final String methodName;
+    private final Integer parameterIndex;
+    private final String parameterName;
+    private final String signature;
+    private final String targetName;
+
+    private ParameterNameMappingEntry(
+        @Nullable String className,
+        @Nullable String methodName,
+        @Nullable String signature,
+        @Nullable String parameterName,
+        @Nullable Integer parameterIndex,
+        @NonNull String targetName) {
+      this.className = className;
+      this.methodName = methodName;
+      this.signature = signature;
+      this.parameterName = parameterName;
+      this.parameterIndex = parameterIndex;
+      this.targetName = targetName;
+
+      assert this.parameterName != null || this.parameterIndex != null;
+    }
+
+    @NonNull
+    public String getTargetName() {
+      return this.targetName;
+    }
+
+    public boolean matches(@NonNull String className, @NonNull String methodName,
+        @NonNull String signature, @NonNull String parameterName, int parameterIndex) {
+      if (this.className != null && !this.className.equals(className)) {
+        return false;
+      }
+
+      if (this.methodName != null && !this.methodName.equals(methodName)) {
+        return false;
+      }
+
+      if (this.signature != null && !this.signature.equals(signature)) {
+        return false;
+      }
+
+      if (this.parameterName != null) {
+        return this.parameterName.equals(parameterName);
+      }
+
+      assert this.parameterIndex != null;
+      return this.parameterIndex == parameterIndex;
+    }
+  }
+
+  /**
    * Provides a parsed representation of a parameter name mapping.
    */
   private static final class ParameterNameMappingImpl implements ParameterNameMapping {
@@ -263,63 +319,6 @@ public final class CSVParameterNameMappingParser extends
       );
 
       return mapping;
-    }
-  }
-
-  /**
-   * Represents a single parsed parameter name entry.
-   */
-  private static final class ParameterNameMappingEntry {
-
-    private final String className;
-    private final String methodName;
-    private final String signature;
-    private final String parameterName;
-    private final Integer parameterIndex;
-    private final String targetName;
-
-    private ParameterNameMappingEntry(
-        @Nullable String className,
-        @Nullable String methodName,
-        @Nullable String signature,
-        @Nullable String parameterName,
-        @Nullable Integer parameterIndex,
-        @NonNull String targetName) {
-      this.className = className;
-      this.methodName = methodName;
-      this.signature = signature;
-      this.parameterName = parameterName;
-      this.parameterIndex = parameterIndex;
-      this.targetName = targetName;
-
-      assert this.parameterName != null || this.parameterIndex != null;
-    }
-
-    @NonNull
-    public String getTargetName() {
-      return this.targetName;
-    }
-
-    public boolean matches(@NonNull String className, @NonNull String methodName,
-        @NonNull String signature, @NonNull String parameterName, int parameterIndex) {
-      if (this.className != null && !this.className.equals(className)) {
-        return false;
-      }
-
-      if (this.methodName != null && !this.methodName.equals(methodName)) {
-        return false;
-      }
-
-      if (this.signature != null && !this.signature.equals(signature)) {
-        return false;
-      }
-
-      if (this.parameterName != null) {
-        return this.parameterName.equals(parameterName);
-      }
-
-      assert this.parameterIndex != null;
-      return this.parameterIndex == parameterIndex;
     }
   }
 }

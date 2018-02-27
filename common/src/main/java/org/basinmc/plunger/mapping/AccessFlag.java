@@ -27,8 +27,8 @@ import java.util.Objects;
  */
 public final class AccessFlag {
 
-  public static final AccessFlag NONE = new AccessFlag(0b000000);
   public static final AccessFlag FINAL = new AccessFlag(0b010000);
+  public static final AccessFlag NONE = new AccessFlag(0b000000);
   public static final AccessFlag PACKAGE_PRIVATE = new AccessFlag(0b000100);
   public static final AccessFlag PRIVATE = new AccessFlag(0b001000);
   public static final AccessFlag PROTECTED = new AccessFlag(0b000010);

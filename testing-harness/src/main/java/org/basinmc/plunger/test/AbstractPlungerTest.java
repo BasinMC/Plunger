@@ -40,20 +40,6 @@ public class AbstractPlungerTest {
   private Path target;
 
   /**
-   * Prepares a test directory with a source and target section in order to permit the evaluation of
-   * a transformer.
-   */
-  @Before
-  public void prepareTestFiles() throws IOException {
-    this.base = Files.createTempDirectory("plunger_test_");
-    this.source = this.base.resolve("source");
-    this.target = this.base.resolve("target");
-
-    Files.createDirectories(this.source);
-    Files.createDirectories(this.target);
-  }
-
-  /**
    * Ensures that all files within the test directory will be correctly deleted at the end of the
    * test execution regardless of its outcome.
    */
@@ -68,16 +54,6 @@ public class AbstractPlungerTest {
             ex.printStackTrace();
           }
         });
-  }
-
-  @Nonnull
-  public Path getSource() {
-    return this.source;
-  }
-
-  @Nonnull
-  public Path getTarget() {
-    return this.target;
   }
 
   /**
@@ -99,5 +75,29 @@ public class AbstractPlungerTest {
         }
       }
     }
+  }
+
+  @Nonnull
+  public Path getSource() {
+    return this.source;
+  }
+
+  @Nonnull
+  public Path getTarget() {
+    return this.target;
+  }
+
+  /**
+   * Prepares a test directory with a source and target section in order to permit the evaluation of
+   * a transformer.
+   */
+  @Before
+  public void prepareTestFiles() throws IOException {
+    this.base = Files.createTempDirectory("plunger_test_");
+    this.source = this.base.resolve("source");
+    this.target = this.base.resolve("target");
+
+    Files.createDirectories(this.source);
+    Files.createDirectories(this.target);
   }
 }

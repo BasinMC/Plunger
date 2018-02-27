@@ -27,16 +27,6 @@ import javax.annotation.Nonnull;
 public interface SourcecodeFormatter {
 
   /**
-   * Reformats the passed source code into a pre-defined format (typically backed by a Styleguide
-   * document).
-   *
-   * @param source the full class source code.
-   * @return a formatted version of the source code.
-   */
-  @Nonnull
-  String format(@Nonnull String source);
-
-  /**
    * Creates a new no-operation code formatter which passes the code back as-is (e.g. with native
    * formatting).
    *
@@ -46,4 +36,14 @@ public interface SourcecodeFormatter {
   static SourcecodeFormatter noop() {
     return (source) -> source;
   }
+
+  /**
+   * Reformats the passed source code into a pre-defined format (typically backed by a Styleguide
+   * document).
+   *
+   * @param source the full class source code.
+   * @return a formatted version of the source code.
+   */
+  @Nonnull
+  String format(@Nonnull String source);
 }
