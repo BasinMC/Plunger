@@ -15,14 +15,19 @@ jobs:
           keys:
           - v1-dependencies-{{ checksum "pom.xml" }}
           - v1-dependencies-
-      - run: mvn dependency:go-offline
+      - run: mvn clean install
+      - store_test_results:
+          path: bytecode/target/surefire-reports
+      - store_test_results:
+          path: common/target/surefire-reports
+      - store_test_results:
+          path: mapping-csv/target/surefire-reports
+      - store_test_results:
+          path: sourcecode/target/surefire-reports
       - save_cache:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
-      - run: mvn clean install
-      - store_test_results:
-          path: target/surefire-reports
       - run: |
           mkdir -p /tmp/artifacts/bytecode
           cp bytecode/target/org.basinmc.plunger-*.jar /tmp/artifacts/bytecode/
