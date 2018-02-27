@@ -117,9 +117,9 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
      * {@inheritDoc}
      */
     @Override
-    public MethodVisitor visitMethod(int access, String name, String descriptor, String signature,
-        String[] exceptions) {
-      MethodVisitor visitor = super.visitMethod(access, name, descriptor, signature, exceptions);
+    public MethodVisitor visitMethod(int access, @NonNull String name, @NonNull String descriptor,
+        @Nullable String signature, @Nullable String[] exceptions) {
+      MethodVisitor visitor = super.visitMethod(access, name, descriptor, descriptor, exceptions);
 
       if (visitor == null) {
         return null;
@@ -136,18 +136,18 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
 
     private final String className;
     private final String methodName;
-    private final String signature;
+    private final String descriptor;
     private int parameterIndex;
 
     private ParameterNameMethodVisitor(
         @NonNull MethodVisitor methodVisitor,
         @NonNull String className,
         @NonNull String methodName,
-        @NonNull String signature) {
+        @Nullable String descriptor) {
       super(Opcodes.ASM6, methodVisitor);
       this.className = className;
       this.methodName = methodName;
-      this.signature = signature;
+      this.descriptor = descriptor;
     }
 
     /**
@@ -157,7 +157,7 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
     public void visitParameter(@Nullable String name, int access) {
       // TODO: Evaluate whether name is actually passed as null when LVT is missing
       name = NameMappingBytecodeTransformer.this.mapping
-          .getParameterName(this.className, this.methodName, this.signature, name,
+          .getParameterName(this.className, this.methodName, this.descriptor, name,
               this.parameterIndex++).orElse(name);
 
       super.visitParameter(name, access);
