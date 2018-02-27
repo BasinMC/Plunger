@@ -39,16 +39,19 @@ public class DelegatingNameMapping implements NameMapping {
   private final List<ClassNameMapping> classNameMappings;
   private final List<FieldNameMapping> fieldNameMappings;
   private final List<MethodNameMapping> methodNameMappings;
+  private final List<ParameterNameMapping> parameterNameMappings;
   private final boolean resolveEnclosure;
 
   protected DelegatingNameMapping(
       @Nonnull List<ClassNameMapping> classNameMappings,
       @Nonnull List<FieldNameMapping> fieldNameMappings,
       @Nonnull List<MethodNameMapping> methodNameMappings,
+      @NonNull List<ParameterNameMapping> parameterNameMappings,
       boolean resolveEnclosure) {
     this.classNameMappings = new ArrayList<>(classNameMappings);
     this.fieldNameMappings = new ArrayList<>(fieldNameMappings);
     this.methodNameMappings = new ArrayList<>(methodNameMappings);
+    this.parameterNameMappings = new ArrayList<>(parameterNameMappings);
     this.resolveEnclosure = resolveEnclosure;
   }
 
@@ -137,6 +140,8 @@ public class DelegatingNameMapping implements NameMapping {
         this.fieldNameMappings.stream().map(FieldNameMapping::invert).collect(Collectors.toList()),
         this.methodNameMappings.stream().map(MethodNameMapping::invert)
             .collect(Collectors.toList()),
+        this.parameterNameMappings.stream().map(ParameterNameMapping::invert)
+            .collect(Collectors.toList()),
         this.resolveEnclosure
     );
   }
@@ -174,6 +179,7 @@ public class DelegatingNameMapping implements NameMapping {
     private final List<ClassNameMapping> classNameMappings = new ArrayList<>();
     private final List<FieldNameMapping> fieldNameMappings = new ArrayList<>();
     private final List<MethodNameMapping> methodNameMappings = new ArrayList<>();
+    private final List<ParameterNameMapping> parameterNameMappings = new ArrayList<>();
     private boolean resolveEnclosure;
 
     private Builder() {
@@ -187,7 +193,7 @@ public class DelegatingNameMapping implements NameMapping {
     @Nonnull
     public DelegatingNameMapping build() {
       return new DelegatingNameMapping(this.classNameMappings, this.fieldNameMappings,
-          this.methodNameMappings, this.resolveEnclosure);
+          this.methodNameMappings, this.parameterNameMappings, this.resolveEnclosure);
     }
 
     /**
@@ -201,6 +207,7 @@ public class DelegatingNameMapping implements NameMapping {
       this.classNameMappings.add(mapping);
       this.fieldNameMappings.add(mapping);
       this.methodNameMappings.add(mapping);
+      this.parameterNameMappings.add(mapping);
       return this;
     }
 
@@ -237,6 +244,18 @@ public class DelegatingNameMapping implements NameMapping {
     @Nonnull
     public Builder withMethodNameMapping(@Nonnull MethodNameMapping mapping) {
       this.methodNameMappings.add(mapping);
+      return this;
+    }
+
+    /**
+     * Appends a parameter name mapping to the delegation.
+     *
+     * @param mapping a parameter name mapping.
+     * @return a reference to this builder.
+     */
+    @NonNull
+    public Builder withParameterNameMapping(@NonNull ParameterNameMapping mapping) {
+      this.parameterNameMappings.add(mapping);
       return this;
     }
 

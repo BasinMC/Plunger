@@ -17,13 +17,26 @@
 package org.basinmc.plunger.common.mapping;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import java.util.Optional;
 
 /**
  * Resolves one or more name mappings.
  *
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
  */
-public interface NameMapping extends ClassNameMapping, FieldNameMapping, MethodNameMapping {
+public interface NameMapping extends ClassNameMapping, FieldNameMapping, MethodNameMapping,
+    ParameterNameMapping {
+
+  /**
+   * {@inheritDoc}
+   */
+  @NonNull
+  @Override
+  default Optional<String> getParameterName(@NonNull String className,
+      @NonNull String methodName, @NonNull String signature, @NonNull String parameterName,
+      int parameterIndex) {
+    return Optional.empty();
+  }
 
   /**
    * {@inheritDoc}

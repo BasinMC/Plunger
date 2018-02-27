@@ -20,8 +20,11 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import java.nio.file.Path;
 import java.util.Optional;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.basinmc.plunger.common.mapping.NameMapping;
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.MethodVisitor;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.Remapper;
 
@@ -47,7 +50,8 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
       @NonNull ClassVisitor nextVisitor) {
     // since we don't know whether a class contains references to a type we're mapping until we've
     // visited it, we'll have to transform all classes
-    return Optional.of(new ClassRemapper(nextVisitor, new DelegatingMapper()));
+    return Optional
+        .of(new ClassRemapper(new ParameterNameClassVisitor(nextVisitor), new DelegatingMapper()));
   }
 
   /**
@@ -87,6 +91,76 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
     public String mapFieldName(String owner, String name, String desc) {
       return NameMappingBytecodeTransformer.this.mapping.getFieldName(owner, name, desc)
           .orElse(name);
+    }
+  }
+
+  /**
+   * Provides a class visitor which will remap the names of parameters.
+   */
+  private final class ParameterNameClassVisitor extends ClassVisitor {
+
+    private String className;
+
+    private ParameterNameClassVisitor(@NonNull ClassVisitor classVisitor) {
+      super(Opcodes.ASM6, classVisitor);
+    }
+
+    @Override
+    public void visit(int version, int access, @NonNull String name, String signature,
+        String superName,
+        String[] interfaces) {
+      this.className = name;
+      super.visit(version, access, name, signature, superName, interfaces);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MethodVisitor visitMethod(int access, String name, String descriptor, String signature,
+        String[] exceptions) {
+      MethodVisitor visitor = super.visitMethod(access, name, descriptor, signature, exceptions);
+
+      if (visitor == null) {
+        return null;
+      }
+
+      return new ParameterNameMethodVisitor(visitor, this.className, name, signature);
+    }
+  }
+
+  /**
+   * Provides a method visitor which will remap the names of parameters.
+   */
+  private final class ParameterNameMethodVisitor extends MethodVisitor {
+
+    private final String className;
+    private final String methodName;
+    private final String signature;
+    private int parameterIndex;
+
+    private ParameterNameMethodVisitor(
+        @NonNull MethodVisitor methodVisitor,
+        @NonNull String className,
+        @NonNull String methodName,
+        @NonNull String signature) {
+      super(Opcodes.ASM6, methodVisitor);
+      this.className = className;
+      this.methodName = methodName;
+      this.signature = signature;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void visitParameter(@Nullable String name, int access) {
+      // TODO: Evaluate whether name is actually passed as null when LVT is missing
+      name = NameMappingBytecodeTransformer.this.mapping
+          .getParameterName(this.className, this.methodName, this.signature, name,
+              this.parameterIndex++).orElse(name);
+
+      super.visitParameter(name, access);
     }
   }
 }
