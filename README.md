@@ -1,4 +1,5 @@
 [![License](https://img.shields.io/github/license/BasinMC/Plunger.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.txt)
+[![Maven Central](https://img.shields.io/maven-central/v/org.basinmc.plunger/common.svg?style=flat-square)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%20org.basinmc.plunger)
 [![GitHub Release](https://img.shields.io/github/release/BasinMC/Plunger.svg?style=flat-square)](https://github.com/BasinMC/Plunger/releases)
 [![CircleCI](https://img.shields.io/circleci/project/github/BasinMC/Plunger.svg?style=flat-square)](https://circleci.com/gh/BasinMC/Plunger)
 
