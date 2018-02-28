@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.basinmc.plunger.mapping.parser;
+package org.basinmc.plunger.mapping.mcp.parser;
 
 import java.io.IOException;
 import java.io.InputStream;

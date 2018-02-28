@@ -259,6 +259,7 @@
     <module>mapping-csv</module>
 
     <module>testing-harness</module>
+    <module>mapping-mcp</module>
   </modules>
 
   <profiles>
