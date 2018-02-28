@@ -109,6 +109,13 @@ public class SRGParameterNameMappingParser {
       }
 
       value = value.substring(parameterSeparatorIndex + 1);
+
+      // since mappings which purely define exceptions may not provide an actual parameter mapping,
+      // we'll simply ignore them here
+      if (value.isEmpty()) {
+        continue;
+      }
+
       String[] parameterNames = value.split(",");
 
       for (int i = 0; i < parameterNames.length; ++i) {
