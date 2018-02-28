@@ -19,7 +19,6 @@ package org.basinmc.plunger.bytecode.transformer;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.nio.file.Path;
 import java.util.Optional;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.basinmc.plunger.mapping.NameMapping;
 import org.objectweb.asm.ClassVisitor;
@@ -38,11 +37,11 @@ import org.objectweb.asm.commons.Remapper;
 public class NameMappingBytecodeTransformer implements BytecodeTransformer {
 
   private final NameMapping mapping;
-  private final boolean createMissingParameters;
+  private final boolean overrideParameters;
 
-  public NameMappingBytecodeTransformer(@NonNull NameMapping mapping, boolean createMissingParameters) {
+  public NameMappingBytecodeTransformer(@NonNull NameMapping mapping, boolean overrideParameters) {
     this.mapping = mapping;
-    this.createMissingParameters = createMissingParameters;
+    this.overrideParameters = overrideParameters;
   }
 
   public NameMappingBytecodeTransformer(@NonNull NameMapping mapping) {
@@ -134,16 +133,32 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
 
       visitor = new ParameterNameMethodVisitor(visitor, this.className, name, descriptor);
 
-      if (NameMappingBytecodeTransformer.this.createMissingParameters) {
+      if (NameMappingBytecodeTransformer.this.overrideParameters) {
         Type[] arguments = Type.getArgumentTypes(descriptor);
         int i = 0;
 
         for (Type argument : arguments) {
           visitor.visitParameter("param" + (i++), 0);
         }
+
+        return new ParameterConsumerMethodVisitor(visitor);
       }
 
       return visitor;
+    }
+  }
+
+  private static final class ParameterConsumerMethodVisitor extends MethodVisitor {
+
+    private ParameterConsumerMethodVisitor(@NonNull MethodVisitor methodVisitor) {
+      super(Opcodes.ASM6, methodVisitor);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void visitParameter(String name, int access) {
     }
   }
 
@@ -161,7 +176,7 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
         @NonNull MethodVisitor methodVisitor,
         @NonNull String className,
         @NonNull String methodName,
-        @Nullable String descriptor) {
+        @NonNull String descriptor) {
       super(Opcodes.ASM6, methodVisitor);
       this.className = className;
       this.methodName = methodName;
