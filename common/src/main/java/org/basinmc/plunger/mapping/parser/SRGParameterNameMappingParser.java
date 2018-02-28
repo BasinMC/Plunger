@@ -65,6 +65,11 @@ public class SRGParameterNameMappingParser {
       String key = (String) entry.getKey();
       String value = (String) entry.getValue();
 
+      // we're really not interested in this value at the moment
+      if ("max_constructor_index".equals(key)) {
+        continue;
+      }
+
       // while SRGs are generally pretty simple in their formatting and efficient to read, this one
       // is not. Effectively these mappings are made up of a set of properties which map the full
       // signature of a method to its parameter names where each parameter is separated by a comma.
@@ -86,6 +91,12 @@ public class SRGParameterNameMappingParser {
 
       String methodName = key.substring(0, methodSignatureSeparatorIndex);
       String signature = key.substring(methodSignatureSeparatorIndex);
+
+      // in case of more specialized mappings, we'll simply ignore them as we only care for
+      // parameters in this particular implementation
+      if (signature.contains("-")) {
+        continue;
+      }
 
       // values may also contain an exception signature (which we obviously ignore in this mapper
       // implementation) so we'll simply strip that part
