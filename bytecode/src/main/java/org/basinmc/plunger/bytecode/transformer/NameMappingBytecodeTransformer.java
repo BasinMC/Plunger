@@ -25,6 +25,7 @@ import org.basinmc.plunger.mapping.NameMapping;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.Remapper;
 
@@ -37,9 +38,15 @@ import org.objectweb.asm.commons.Remapper;
 public class NameMappingBytecodeTransformer implements BytecodeTransformer {
 
   private final NameMapping mapping;
+  private final boolean createMissingParameters;
 
-  public NameMappingBytecodeTransformer(@Nonnull NameMapping mapping) {
+  public NameMappingBytecodeTransformer(@Nonnull NameMapping mapping, boolean createMissingParameters) {
     this.mapping = mapping;
+    this.createMissingParameters = createMissingParameters;
+  }
+
+  public NameMappingBytecodeTransformer(@NonNull NameMapping mapping) {
+    this(mapping, false);
   }
 
   /**
@@ -125,7 +132,18 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
         return null;
       }
 
-      return new ParameterNameMethodVisitor(visitor, this.className, name, signature);
+      visitor = new ParameterNameMethodVisitor(visitor, this.className, name, descriptor);
+
+      if (NameMappingBytecodeTransformer.this.createMissingParameters) {
+        Type[] arguments = Type.getArgumentTypes(descriptor);
+        int i = 0;
+
+        for (Type argument : arguments) {
+          visitor.visitParameter("param" + (i++), 0);
+        }
+      }
+
+      return visitor;
     }
   }
 
