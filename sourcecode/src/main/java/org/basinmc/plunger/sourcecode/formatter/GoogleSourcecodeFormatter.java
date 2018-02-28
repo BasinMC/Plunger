@@ -18,7 +18,7 @@ package org.basinmc.plunger.sourcecode.formatter;
 
 import com.google.googlejavaformat.java.Formatter;
 import com.google.googlejavaformat.java.FormatterException;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Provides source code formatting using the Google Java Formatter.
@@ -30,9 +30,9 @@ public class GoogleSourcecodeFormatter implements SourcecodeFormatter {
   /**
    * {@inheritDoc}
    */
-  @Nonnull
+  @NonNull
   @Override
-  public String format(@Nonnull String source) {
+  public String format(@NonNull String source) {
     Formatter formatter = new Formatter();
 
     try {

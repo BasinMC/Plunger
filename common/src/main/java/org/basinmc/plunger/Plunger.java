@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Applies a set of pre-configured transformers to an arbitrary archive or directory of either
@@ -193,7 +193,7 @@ public interface Plunger {
     /**
      * @see #withParallelism(boolean)
      */
-    @Nonnull
+    @NonNull
     public Builder withParallelism() {
       return this.withParallelism(true);
     }
@@ -209,7 +209,7 @@ public interface Plunger {
      * @param value true if parallel execution is desired, false otherwise.
      * @return a reference to this builder.
      */
-    @Nonnull
+    @NonNull
     public Builder withParallelism(boolean value) {
       this.parallelism = value;
       return this;
@@ -235,7 +235,7 @@ public interface Plunger {
      * @param value true if relocation is desired, false otherwise.
      * @return a reference to this builder.
      */
-    @Nonnull
+    @NonNull
     public Builder withSourceRelocation(boolean value) {
       this.sourceRelocation = value;
       return this;

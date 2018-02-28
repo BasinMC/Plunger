@@ -18,7 +18,7 @@ package org.basinmc.plunger.sourcecode.transformer;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.nio.file.Path;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.jboss.forge.roaster.model.source.FieldHolderSource;
 import org.jboss.forge.roaster.model.source.FieldSource;
 import org.jboss.forge.roaster.model.source.JavaSource;
@@ -57,14 +57,14 @@ public abstract class AbstractCascadingSourcecodeTransformer implements Sourceco
     }
   }
 
-  protected void transformField(@Nonnull Path source, @Nonnull JavaSource<?> typeSource,
-      @Nonnull FieldSource<?> fieldSource) {
+  protected void transformField(@NonNull Path source, @NonNull JavaSource<?> typeSource,
+      @NonNull FieldSource<?> fieldSource) {
   }
 
-  protected void transformMethod(@Nonnull Path source, @Nonnull JavaSource<?> typeSource,
-      @Nonnull MethodSource<?> methodSource) {
+  protected void transformMethod(@NonNull Path source, @NonNull JavaSource<?> typeSource,
+      @NonNull MethodSource<?> methodSource) {
   }
 
-  protected void transformType(@Nonnull Path source, @Nonnull JavaSource<?> typeSource) {
+  protected void transformType(@NonNull Path source, @NonNull JavaSource<?> typeSource) {
   }
 }

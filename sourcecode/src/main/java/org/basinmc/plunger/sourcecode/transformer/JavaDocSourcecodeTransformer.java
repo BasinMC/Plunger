@@ -18,7 +18,7 @@ package org.basinmc.plunger.sourcecode.transformer;
 
 import java.nio.file.Path;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.basinmc.plunger.sourcecode.generator.JavaDocGenerator;
 import org.basinmc.plunger.sourcecode.utility.ReferenceUtility;
 import org.jboss.forge.roaster.model.Type;
@@ -35,7 +35,7 @@ public class JavaDocSourcecodeTransformer extends AbstractCascadingSourcecodeTra
 
   private final JavaDocGenerator generator;
 
-  public JavaDocSourcecodeTransformer(@Nonnull JavaDocGenerator generator) {
+  public JavaDocSourcecodeTransformer(@NonNull JavaDocGenerator generator) {
     this.generator = generator;
   }
 
@@ -43,8 +43,8 @@ public class JavaDocSourcecodeTransformer extends AbstractCascadingSourcecodeTra
    * {@inheritDoc}
    */
   @Override
-  protected void transformField(@Nonnull Path source, @Nonnull JavaSource<?> typeSource,
-      @Nonnull FieldSource<?> fieldSource) {
+  protected void transformField(@NonNull Path source, @NonNull JavaSource<?> typeSource,
+      @NonNull FieldSource<?> fieldSource) {
     this.generator.getFieldDocumentation(
         ReferenceUtility.getBytecodeReference(typeSource.getQualifiedName()),
         fieldSource.getName(),
@@ -57,8 +57,8 @@ public class JavaDocSourcecodeTransformer extends AbstractCascadingSourcecodeTra
    * {@inheritDoc}
    */
   @Override
-  protected void transformMethod(@Nonnull Path source, @Nonnull JavaSource<?> typeSource,
-      @Nonnull MethodSource<?> methodSource) {
+  protected void transformMethod(@NonNull Path source, @NonNull JavaSource<?> typeSource,
+      @NonNull MethodSource<?> methodSource) {
     String returnType = ReferenceUtility.VOID_REFERENCE;
     String name = methodSource.getName();
 
@@ -98,7 +98,7 @@ public class JavaDocSourcecodeTransformer extends AbstractCascadingSourcecodeTra
    * {@inheritDoc}
    */
   @Override
-  protected void transformType(@Nonnull Path source, @Nonnull JavaSource<?> typeSource) {
+  protected void transformType(@NonNull Path source, @NonNull JavaSource<?> typeSource) {
     this.generator
         .getClassDocumentation(
             ReferenceUtility.getBytecodeReference(typeSource.getQualifiedName()))

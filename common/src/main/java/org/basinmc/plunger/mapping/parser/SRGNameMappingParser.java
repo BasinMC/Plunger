@@ -32,7 +32,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.basinmc.plunger.mapping.NameMapping;
 
 /**
@@ -45,8 +45,8 @@ public class SRGNameMappingParser {
   /**
    * @see #parse(Path, Charset)
    */
-  @Nonnull
-  public NameMapping parse(@Nonnull Path path) throws IOException {
+  @NonNull
+  public NameMapping parse(@NonNull Path path) throws IOException {
     return this.parse(path, StandardCharsets.UTF_8);
   }
 
@@ -57,8 +57,8 @@ public class SRGNameMappingParser {
    * @return a parsed mapping.
    * @throws IOException when accessing the file fails.
    */
-  @Nonnull
-  public NameMapping parse(@Nonnull Path path, @Nonnull Charset charset) throws IOException {
+  @NonNull
+  public NameMapping parse(@NonNull Path path, @NonNull Charset charset) throws IOException {
     try (BufferedReader reader = Files.newBufferedReader(path, charset)) {
       return this.parse(reader);
     }
@@ -67,8 +67,8 @@ public class SRGNameMappingParser {
   /**
    * @see #parse(InputStream, Charset)
    */
-  @Nonnull
-  public NameMapping parse(@Nonnull InputStream inputStream) throws IOException {
+  @NonNull
+  public NameMapping parse(@NonNull InputStream inputStream) throws IOException {
     return this.parse(inputStream, StandardCharsets.UTF_8);
   }
 
@@ -80,8 +80,8 @@ public class SRGNameMappingParser {
    * @return a parsed mapping.
    * @throws IOException when accessing the input stream fails.
    */
-  @Nonnull
-  public NameMapping parse(@Nonnull InputStream inputStream, @Nonnull Charset charset)
+  @NonNull
+  public NameMapping parse(@NonNull InputStream inputStream, @NonNull Charset charset)
       throws IOException {
     try (InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
       return this.parse(reader);
@@ -95,8 +95,8 @@ public class SRGNameMappingParser {
    * @return a parsed mapping.
    * @throws IOException when accessing the reader fails.
    */
-  @Nonnull
-  public NameMapping parse(@Nonnull Reader reader) throws IOException {
+  @NonNull
+  public NameMapping parse(@NonNull Reader reader) throws IOException {
     try (BufferedReader bufferedReader = new BufferedReader(reader)) {
       return this.parse(bufferedReader);
     }
@@ -108,8 +108,8 @@ public class SRGNameMappingParser {
    * @param reader a buffered reader.
    * @return a parsed mapping.
    */
-  @Nonnull
-  public NameMapping parse(@Nonnull BufferedReader reader) throws IOException {
+  @NonNull
+  public NameMapping parse(@NonNull BufferedReader reader) throws IOException {
     NameMappingImpl mapping = new NameMappingImpl();
 
     int lineNumber = 1;
@@ -158,8 +158,8 @@ public class SRGNameMappingParser {
    * @param line an unparsed SRG line.
    * @throws IOException when parsing fails.
    */
-  private void parseClassMapping(@Nonnull NameMappingImpl mapping, int lineNumber,
-      @Nonnull String line) throws IOException {
+  private void parseClassMapping(@NonNull NameMappingImpl mapping, int lineNumber,
+      @NonNull String line) throws IOException {
     String[] elements = line.split(" ");
 
     if (elements.length != 2) {
@@ -178,8 +178,8 @@ public class SRGNameMappingParser {
    * @param line an unparsed SRG line.
    * @throws IOException when parsing fails.
    */
-  private void parseFieldMapping(@Nonnull NameMappingImpl mapping, int lineNumber,
-      @Nonnull String line) throws IOException {
+  private void parseFieldMapping(@NonNull NameMappingImpl mapping, int lineNumber,
+      @NonNull String line) throws IOException {
     String[] elements = line.split(" ");
 
     if (elements.length != 2) {
@@ -220,8 +220,8 @@ public class SRGNameMappingParser {
    * @param line an unparsed SRG line.
    * @throws IOException when parsing fails.
    */
-  private void parseMethodMapping(@Nonnull NameMappingImpl mapping, int lineNumber,
-      @Nonnull String line) throws IOException {
+  private void parseMethodMapping(@NonNull NameMappingImpl mapping, int lineNumber,
+      @NonNull String line) throws IOException {
     String[] elements = line.split(" ");
 
     if (elements.length != 4) {
@@ -266,20 +266,20 @@ public class SRGNameMappingParser {
     private final String originalName;
     private final String targetName;
 
-    private FieldMapping(@Nonnull String className, @Nonnull String originalName,
-        @Nonnull String targetName) {
+    private FieldMapping(@NonNull String className, @NonNull String originalName,
+        @NonNull String targetName) {
       this.className = className;
       this.originalName = originalName;
       this.targetName = targetName;
     }
 
-    @Nonnull
+    @NonNull
     public String getTargetName() {
       return this.targetName;
     }
 
-    public boolean matches(@Nonnull String className, @Nonnull String name,
-        @Nonnull String signature) {
+    public boolean matches(@NonNull String className, @NonNull String name,
+        @NonNull String signature) {
       return this.className.equals(className) && this.originalName.equals(name);
     }
   }
@@ -295,23 +295,23 @@ public class SRGNameMappingParser {
     private final String targetName;
 
     public MethodMapping(
-        @Nonnull String className,
-        @Nonnull String originalName,
-        @Nonnull String targetName,
-        @Nonnull String signature) {
+        @NonNull String className,
+        @NonNull String originalName,
+        @NonNull String targetName,
+        @NonNull String signature) {
       this.className = className;
       this.originalName = originalName;
       this.targetName = targetName;
       this.signature = signature;
     }
 
-    @Nonnull
+    @NonNull
     public String getTargetName() {
       return this.targetName;
     }
 
-    public boolean matches(@Nonnull String className, @Nonnull String name,
-        @Nonnull String signature) {
+    public boolean matches(@NonNull String className, @NonNull String name,
+        @NonNull String signature) {
       return this.className.equals(className) && this.originalName.equals(name) && this.signature
           .equals(signature);
     }

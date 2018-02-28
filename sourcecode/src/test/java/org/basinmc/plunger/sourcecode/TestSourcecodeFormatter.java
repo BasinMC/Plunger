@@ -16,7 +16,7 @@
  */
 package org.basinmc.plunger.sourcecode;
 
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.basinmc.plunger.sourcecode.formatter.GoogleSourcecodeFormatter;
 
 /**
@@ -29,9 +29,9 @@ public class TestSourcecodeFormatter extends GoogleSourcecodeFormatter {
   /**
    * {@inheritDoc}
    */
-  @Nonnull
+  @NonNull
   @Override
-  public String format(@Nonnull String source) {
+  public String format(@NonNull String source) {
     return super.format(source).replace("\r", "");
   }
 }

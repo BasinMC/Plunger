@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Provides a utility implementation which permits the conversion between Java language and JVM
@@ -73,9 +73,9 @@ public final class ReferenceUtility {
    * @param parameterTypes an ordered list of Bytecode signatures for each parameter of the method.
    * @return a method signature.
    */
-  @Nonnull
-  public static String generateBytecodeSignature(@Nonnull String returnType,
-      @Nonnull List<String> parameterTypes) {
+  @NonNull
+  public static String generateBytecodeSignature(@NonNull String returnType,
+      @NonNull List<String> parameterTypes) {
     StringBuilder builder = new StringBuilder();
 
     parameterTypes.forEach((r) -> {
@@ -96,7 +96,7 @@ public final class ReferenceUtility {
    * @param signature a Bytecode signature.
    * @return an array depth (or zero when the signature does not define an array).
    */
-  public static int getArrayDimension(@Nonnull String signature) {
+  public static int getArrayDimension(@NonNull String signature) {
     int dimension = 0;
 
     while (signature.startsWith("[")) {
@@ -113,8 +113,8 @@ public final class ReferenceUtility {
    * @param signature a signature.
    * @return a list of Bytecode references.
    */
-  @Nonnull
-  public static List<String> getBytecodeParameterReferences(@Nonnull String signature) {
+  @NonNull
+  public static List<String> getBytecodeParameterReferences(@NonNull String signature) {
     // strip the first character and remove the return type
     signature = signature.substring(1);
     signature = signature.substring(0, signature.lastIndexOf(')'));
@@ -133,8 +133,8 @@ public final class ReferenceUtility {
    * @param className a fully qualified class name.
    * @return a fully qualified Bytecode reference.
    */
-  @Nonnull
-  public static String getBytecodeReference(@Nonnull String className) {
+  @NonNull
+  public static String getBytecodeReference(@NonNull String className) {
     return className.replace('.', '/');
   }
 
@@ -144,8 +144,8 @@ public final class ReferenceUtility {
    * @param signature a signature.
    * @return a return type Bytecode reference.
    */
-  @Nonnull
-  public static String getBytecodeReturnTypeReference(@Nonnull String signature) {
+  @NonNull
+  public static String getBytecodeReturnTypeReference(@NonNull String signature) {
     return signature.substring(0, signature.lastIndexOf(')'));
   }
 
@@ -155,8 +155,8 @@ public final class ReferenceUtility {
    * @param signature a fully qualified type reference or primitive type name.
    * @return a Bytecode signature.
    */
-  @Nonnull
-  public static String getBytecodeTypeDescription(@Nonnull String signature) {
+  @NonNull
+  public static String getBytecodeTypeDescription(@NonNull String signature) {
     if (PRIMITIVE_REFERENCE_MAP.containsKey(signature)) {
       return Character.toString(PRIMITIVE_REFERENCE_MAP.get(signature));
     }
@@ -171,8 +171,8 @@ public final class ReferenceUtility {
    * @param arrayDimension an array dimension (non-negative).
    * @return a Bytecode signature.
    */
-  @Nonnull
-  public static String getBytecodeTypeDescription(@Nonnull String signature, int arrayDimension) {
+  @NonNull
+  public static String getBytecodeTypeDescription(@NonNull String signature, int arrayDimension) {
     StringBuilder builder = new StringBuilder();
 
     for (int i = 1; i < arrayDimension; ++i) {
@@ -190,8 +190,8 @@ public final class ReferenceUtility {
    * @param reference a full Bytecode reference.
    * @return a fully qualified Java type reference.
    */
-  @Nonnull
-  public static String getJavaTypeDescription(@Nonnull String reference) {
+  @NonNull
+  public static String getJavaTypeDescription(@NonNull String reference) {
     // strip the array attributes as we do not handle them here
     while (reference.startsWith("[")) {
       reference = reference.substring(1);
@@ -217,8 +217,8 @@ public final class ReferenceUtility {
    * @param reference a fully qualified Bytecode reference.
    * @return a fully qualified Java reference.
    */
-  @Nonnull
-  public static String getJavaTypeReference(@Nonnull String reference) {
+  @NonNull
+  public static String getJavaTypeReference(@NonNull String reference) {
     return reference.replace('/', '.');
   }
 }

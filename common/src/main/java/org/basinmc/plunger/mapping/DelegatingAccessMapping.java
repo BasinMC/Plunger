@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * <p>Provides a delegation based access mapping which queries multiple mapping implementations in
@@ -137,7 +137,7 @@ public class DelegatingAccessMapping implements AccessMapping {
      *
      * @return a delegating mapping.
      */
-    @Nonnull
+    @NonNull
     public DelegatingAccessMapping build() {
       return new DelegatingAccessMapping(
           this.classAccessMappings,
@@ -152,8 +152,8 @@ public class DelegatingAccessMapping implements AccessMapping {
      * @param mapping a class access mapping.
      * @return a reference to this builder.
      */
-    @Nonnull
-    public Builder withClassMapping(@Nonnull ClassAccessMapping mapping) {
+    @NonNull
+    public Builder withClassMapping(@NonNull ClassAccessMapping mapping) {
       this.classAccessMappings.add(mapping);
       return this;
     }
@@ -164,8 +164,8 @@ public class DelegatingAccessMapping implements AccessMapping {
      * @param mapping a field access mapping.
      * @return a reference to this builder.
      */
-    @Nonnull
-    public Builder withFieldAccessMapping(@Nonnull FieldAccessMapping mapping) {
+    @NonNull
+    public Builder withFieldAccessMapping(@NonNull FieldAccessMapping mapping) {
       this.fieldAccessMappings.add(mapping);
       return this;
     }
@@ -176,8 +176,8 @@ public class DelegatingAccessMapping implements AccessMapping {
      * @param mapping a full access mapping.
      * @return a reference to this builder.
      */
-    @Nonnull
-    public Builder withMapping(@Nonnull AccessMapping mapping) {
+    @NonNull
+    public Builder withMapping(@NonNull AccessMapping mapping) {
       this.classAccessMappings.add(mapping);
       this.fieldAccessMappings.add(mapping);
       this.methodAccessMappings.add(mapping);
@@ -190,8 +190,8 @@ public class DelegatingAccessMapping implements AccessMapping {
      * @param mapping a method access mapping.
      * @return a reference to this builder.
      */
-    @Nonnull
-    public Builder withMethodAccessMapping(@Nonnull MethodAccessMapping mapping) {
+    @NonNull
+    public Builder withMethodAccessMapping(@NonNull MethodAccessMapping mapping) {
       this.methodAccessMappings.add(mapping);
       return this;
     }

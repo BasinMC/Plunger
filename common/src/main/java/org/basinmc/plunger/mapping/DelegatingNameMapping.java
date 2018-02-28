@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * <p>Provides a name mapping implementation which delegates its lookups to an arbitrary set of
@@ -44,9 +44,9 @@ public class DelegatingNameMapping implements NameMapping {
   private final boolean resolveEnclosure;
 
   protected DelegatingNameMapping(
-      @Nonnull List<ClassNameMapping> classNameMappings,
-      @Nonnull List<FieldNameMapping> fieldNameMappings,
-      @Nonnull List<MethodNameMapping> methodNameMappings,
+      @NonNull List<ClassNameMapping> classNameMappings,
+      @NonNull List<FieldNameMapping> fieldNameMappings,
+      @NonNull List<MethodNameMapping> methodNameMappings,
       @NonNull List<ParameterNameMapping> parameterNameMappings,
       boolean resolveEnclosure) {
     this.classNameMappings = new ArrayList<>(classNameMappings);
@@ -61,7 +61,7 @@ public class DelegatingNameMapping implements NameMapping {
    *
    * @return a new builder instance.
    */
-  @Nonnull
+  @NonNull
   public static Builder builder() {
     return new Builder();
   }
@@ -217,7 +217,7 @@ public class DelegatingNameMapping implements NameMapping {
      *
      * @return a delegating mapping.
      */
-    @Nonnull
+    @NonNull
     public DelegatingNameMapping build() {
       return new DelegatingNameMapping(this.classNameMappings, this.fieldNameMappings,
           this.methodNameMappings, this.parameterNameMappings, this.resolveEnclosure);
@@ -229,8 +229,8 @@ public class DelegatingNameMapping implements NameMapping {
      * @param mapping a class name mapping.
      * @return a reference to this builder.
      */
-    @Nonnull
-    public Builder withClassMapping(@Nonnull ClassNameMapping mapping) {
+    @NonNull
+    public Builder withClassMapping(@NonNull ClassNameMapping mapping) {
       this.classNameMappings.add(mapping);
       return this;
     }
@@ -241,8 +241,8 @@ public class DelegatingNameMapping implements NameMapping {
      * @param mapping a field name mapping.
      * @return a reference to this builder.
      */
-    @Nonnull
-    public Builder withFieldNameMapping(@Nonnull FieldNameMapping mapping) {
+    @NonNull
+    public Builder withFieldNameMapping(@NonNull FieldNameMapping mapping) {
       this.fieldNameMappings.add(mapping);
       return this;
     }
@@ -253,8 +253,8 @@ public class DelegatingNameMapping implements NameMapping {
      * @param mapping a full name mapping.
      * @return a reference to this builder.
      */
-    @Nonnull
-    public Builder withMapping(@Nonnull NameMapping mapping) {
+    @NonNull
+    public Builder withMapping(@NonNull NameMapping mapping) {
       this.classNameMappings.add(mapping);
       this.fieldNameMappings.add(mapping);
       this.methodNameMappings.add(mapping);
@@ -268,8 +268,8 @@ public class DelegatingNameMapping implements NameMapping {
      * @param mapping a method name mapping.
      * @return a reference to this builder.
      */
-    @Nonnull
-    public Builder withMethodNameMapping(@Nonnull MethodNameMapping mapping) {
+    @NonNull
+    public Builder withMethodNameMapping(@NonNull MethodNameMapping mapping) {
       this.methodNameMappings.add(mapping);
       return this;
     }
@@ -289,7 +289,7 @@ public class DelegatingNameMapping implements NameMapping {
     /**
      * @see #withResolveEnclosure(boolean)
      */
-    @Nonnull
+    @NonNull
     public Builder withResolveEnclosure() {
       return this.withResolveEnclosure(true);
     }
@@ -301,7 +301,7 @@ public class DelegatingNameMapping implements NameMapping {
      * @param value true if enabled, false otherwise
      * @return a reference to this builder.
      */
-    @Nonnull
+    @NonNull
     public Builder withResolveEnclosure(boolean value) {
       this.resolveEnclosure = value;
       return this;

@@ -25,8 +25,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 
@@ -39,7 +39,7 @@ public abstract class AbstractCSVMappingParser<M> {
 
   private final CSVFormat format;
 
-  AbstractCSVMappingParser(@Nonnull CSVFormat format) {
+  AbstractCSVMappingParser(@NonNull CSVFormat format) {
     this.format = format;
   }
 
@@ -50,7 +50,7 @@ public abstract class AbstractCSVMappingParser<M> {
    * @return a mapping.
    * @throws IOException when parsing fails.
    */
-  protected abstract M doParse(@Nonnull CSVParser parser) throws IOException;
+  protected abstract M doParse(@NonNull CSVParser parser) throws IOException;
 
   /**
    * Parses the contents of an arbitrary file.
@@ -60,8 +60,8 @@ public abstract class AbstractCSVMappingParser<M> {
    * @return a set of mappings of a certain type.
    * @throws IOException when parsing the mappings fails.
    */
-  @Nonnull
-  public M parse(@Nonnull Path file, @Nonnull Charset charset) throws IOException {
+  @NonNull
+  public M parse(@NonNull Path file, @NonNull Charset charset) throws IOException {
     try (BufferedReader reader = Files.newBufferedReader(file, charset)) {
       return this.parse(reader);
     }
@@ -70,8 +70,8 @@ public abstract class AbstractCSVMappingParser<M> {
   /**
    * @see #parse(InputStream, Charset)
    */
-  @Nonnull
-  public M parse(@Nonnull InputStream inputStream) throws IOException {
+  @NonNull
+  public M parse(@NonNull InputStream inputStream) throws IOException {
     return this.parse(inputStream, StandardCharsets.UTF_8);
   }
 
@@ -83,8 +83,8 @@ public abstract class AbstractCSVMappingParser<M> {
    * @return a set of mappings of a certain type.
    * @throws IOException when parsing the mappings fails.
    */
-  @Nonnull
-  public M parse(@Nonnull InputStream inputStream, @Nonnull Charset charset) throws IOException {
+  @NonNull
+  public M parse(@NonNull InputStream inputStream, @NonNull Charset charset) throws IOException {
     try (InputStreamReader reader = new InputStreamReader(inputStream, charset)) {
       return this.parse(reader);
     }
@@ -97,8 +97,8 @@ public abstract class AbstractCSVMappingParser<M> {
    * @return a set of mappings of a certain type.
    * @throws IOException when parsing the mappings fails.
    */
-  @Nonnull
-  public M parse(@Nonnull Reader reader) throws IOException {
+  @NonNull
+  public M parse(@NonNull Reader reader) throws IOException {
     CSVParser parser = new CSVParser(reader, this.format);
     return this.doParse(parser);
   }
@@ -106,8 +106,8 @@ public abstract class AbstractCSVMappingParser<M> {
   /**
    * @see #parse(Path, Charset)
    */
-  @Nonnull
-  public M parse(@Nonnull Path file) throws IOException {
+  @NonNull
+  public M parse(@NonNull Path file) throws IOException {
     return this.parse(file, StandardCharsets.UTF_8);
   }
 
@@ -125,8 +125,8 @@ public abstract class AbstractCSVMappingParser<M> {
      * @param format a CSV format.
      * @return a reference to this builder.
      */
-    @Nonnull
-    public Builder withFormat(@Nonnull CSVFormat format) {
+    @NonNull
+    public Builder withFormat(@NonNull CSVFormat format) {
       this.format = format;
       return this;
     }
@@ -149,7 +149,7 @@ public abstract class AbstractCSVMappingParser<M> {
      * @param columnName a column name.
      * @return a reference to this builder.
      */
-    @Nonnull
+    @NonNull
     public MemberBuilder withClassNameColumn(@Nullable String columnName) {
       this.classNameColumn = columnName;
       return this;

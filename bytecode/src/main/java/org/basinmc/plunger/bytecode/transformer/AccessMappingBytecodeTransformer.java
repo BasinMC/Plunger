@@ -19,7 +19,7 @@ package org.basinmc.plunger.bytecode.transformer;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.nio.file.Path;
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.basinmc.plunger.mapping.AccessFlag;
 import org.basinmc.plunger.mapping.AccessMapping;
 import org.objectweb.asm.ClassVisitor;
@@ -37,7 +37,7 @@ public class AccessMappingBytecodeTransformer implements BytecodeTransformer {
 
   private final AccessMapping accessMapping;
 
-  public AccessMappingBytecodeTransformer(@Nonnull AccessMapping accessMapping) {
+  public AccessMappingBytecodeTransformer(@NonNull AccessMapping accessMapping) {
     this.accessMapping = accessMapping;
   }
 
@@ -81,7 +81,7 @@ public class AccessMappingBytecodeTransformer implements BytecodeTransformer {
   /**
    * {@inheritDoc}
    */
-  @Nonnull
+  @NonNull
   @Override
   public Optional<ClassVisitor> createTransformer(@NonNull Path source,
       @NonNull ClassVisitor nextVisitor) {
@@ -95,7 +95,7 @@ public class AccessMappingBytecodeTransformer implements BytecodeTransformer {
 
     private String enclosingClass;
 
-    private AccessOverrideClassVisitor(@Nonnull ClassVisitor classVisitor) {
+    private AccessOverrideClassVisitor(@NonNull ClassVisitor classVisitor) {
       super(Opcodes.ASM6, classVisitor);
     }
 
@@ -103,7 +103,7 @@ public class AccessMappingBytecodeTransformer implements BytecodeTransformer {
      * {@inheritDoc}
      */
     @Override
-    public void visit(int version, int access, @Nonnull String name,
+    public void visit(int version, int access, @NonNull String name,
         String signature,
         String superName,
         String[] interfaces) {
@@ -121,7 +121,7 @@ public class AccessMappingBytecodeTransformer implements BytecodeTransformer {
      * {@inheritDoc}
      */
     @Override
-    public FieldVisitor visitField(int access, @Nonnull String name, @Nonnull String descriptor,
+    public FieldVisitor visitField(int access, @NonNull String name, @NonNull String descriptor,
         String signature,
         Object value) {
       access = AccessMappingBytecodeTransformer.this.accessMapping

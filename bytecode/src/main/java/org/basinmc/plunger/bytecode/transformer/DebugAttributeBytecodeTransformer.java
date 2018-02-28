@@ -19,7 +19,7 @@ package org.basinmc.plunger.bytecode.transformer;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.nio.file.Path;
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
@@ -66,7 +66,7 @@ public class DebugAttributeBytecodeTransformer implements BytecodeTransformer {
    */
   private final class DebugClassAttributeVisitor extends ClassVisitor {
 
-    private DebugClassAttributeVisitor(@Nonnull ClassVisitor classVisitor) {
+    private DebugClassAttributeVisitor(@NonNull ClassVisitor classVisitor) {
       super(Opcodes.ASM6, classVisitor);
     }
 
@@ -74,7 +74,7 @@ public class DebugAttributeBytecodeTransformer implements BytecodeTransformer {
      * {@inheritDoc}
      */
     @Override
-    public void visitAttribute(@Nonnull Attribute attribute) {
+    public void visitAttribute(@NonNull Attribute attribute) {
       if (DebugAttributeBytecodeTransformer.this.removeLocalVariableTable && "LocalVariableTable"
           .equals(attribute.type)) {
         return;
@@ -135,7 +135,7 @@ public class DebugAttributeBytecodeTransformer implements BytecodeTransformer {
    */
   private final class DebugFieldAttributeVisitor extends FieldVisitor {
 
-    private DebugFieldAttributeVisitor(@Nonnull FieldVisitor fieldVisitor) {
+    private DebugFieldAttributeVisitor(@NonNull FieldVisitor fieldVisitor) {
       super(Opcodes.ASM6, fieldVisitor);
     }
 

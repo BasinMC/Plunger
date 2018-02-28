@@ -16,6 +16,7 @@
  */
 package org.basinmc.plunger.test;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.channels.Channels;
@@ -24,7 +25,6 @@ import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import javax.annotation.Nonnull;
 import org.junit.After;
 import org.junit.Before;
 
@@ -63,7 +63,7 @@ public class AbstractPlungerTest {
    * @param location a relative path to the target file.
    * @throws IOException when reading the test file or writing it to a temporary directory fails.
    */
-  protected void extractSourceFile(@Nonnull String path, @Nonnull Path location)
+  protected void extractSourceFile(@NonNull String path, @NonNull Path location)
       throws IOException {
     Path target = this.source.resolve(location);
 
@@ -77,12 +77,12 @@ public class AbstractPlungerTest {
     }
   }
 
-  @Nonnull
+  @NonNull
   public Path getSource() {
     return this.source;
   }
 
-  @Nonnull
+  @NonNull
   public Path getTarget() {
     return this.target;
   }

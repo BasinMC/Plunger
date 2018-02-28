@@ -20,7 +20,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import java.nio.file.Path;
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -60,7 +60,7 @@ public class OverrideSourceBytecodeTransformer implements BytecodeTransformer {
    */
   private final class OverridingClassVisitor extends ClassVisitor {
 
-    private OverridingClassVisitor(@Nonnull ClassVisitor classVisitor) {
+    private OverridingClassVisitor(@NonNull ClassVisitor classVisitor) {
       super(Opcodes.ASM6, classVisitor);
     }
 
@@ -94,7 +94,7 @@ public class OverrideSourceBytecodeTransformer implements BytecodeTransformer {
    */
   private final class OverridingMethodVisitor extends MethodVisitor {
 
-    private OverridingMethodVisitor(@Nonnull MethodVisitor methodVisitor) {
+    private OverridingMethodVisitor(@NonNull MethodVisitor methodVisitor) {
       super(Opcodes.ASM6, methodVisitor);
     }
 

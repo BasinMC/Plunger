@@ -16,7 +16,7 @@
  */
 package org.basinmc.plunger.sourcecode.formatter;
 
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Provides means to format arbitrary source code into a pre-defined format.
@@ -32,7 +32,7 @@ public interface SourcecodeFormatter {
    *
    * @return a no-op source code formatter.
    */
-  @Nonnull
+  @NonNull
   static SourcecodeFormatter noop() {
     return (source) -> source;
   }
@@ -44,6 +44,6 @@ public interface SourcecodeFormatter {
    * @param source the full class source code.
    * @return a formatted version of the source code.
    */
-  @Nonnull
-  String format(@Nonnull String source);
+  @NonNull
+  String format(@NonNull String source);
 }

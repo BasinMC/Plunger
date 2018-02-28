@@ -22,8 +22,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.basinmc.plunger.mapping.MethodNameMapping;
@@ -41,10 +41,10 @@ public final class CSVMethodNameMappingParser extends AbstractCSVMappingParser<M
   private final String targetNameColumn;
 
   private CSVMethodNameMappingParser(
-      @Nonnull CSVFormat format,
+      @NonNull CSVFormat format,
       @Nullable String classNameColumn,
-      @Nonnull String originalNameColumn,
-      @Nonnull String targetNameColumn,
+      @NonNull String originalNameColumn,
+      @NonNull String targetNameColumn,
       @Nullable String signatureColumn) {
     super(format);
     this.classNameColumn = classNameColumn;
@@ -58,7 +58,7 @@ public final class CSVMethodNameMappingParser extends AbstractCSVMappingParser<M
    *
    * @return an empty factory.
    */
-  @Nonnull
+  @NonNull
   public static Builder builder() {
     return new Builder();
   }
@@ -67,7 +67,7 @@ public final class CSVMethodNameMappingParser extends AbstractCSVMappingParser<M
    * {@inheritDoc}
    */
   @Override
-  protected MethodNameMapping doParse(@Nonnull CSVParser parser) throws IOException {
+  protected MethodNameMapping doParse(@NonNull CSVParser parser) throws IOException {
     MethodNameMappingImpl mapping = new MethodNameMappingImpl();
 
     parser.getRecords().forEach((r) -> {
@@ -107,10 +107,10 @@ public final class CSVMethodNameMappingParser extends AbstractCSVMappingParser<M
      * stored.
      * @param targetNameColumn the name of the column in which the target method name is stored.
      */
-    @Nonnull
+    @NonNull
     public CSVMethodNameMappingParser build(
-        @Nonnull String originalNameColumn,
-        @Nonnull String targetNameColumn) {
+        @NonNull String originalNameColumn,
+        @NonNull String targetNameColumn) {
       return new CSVMethodNameMappingParser(
           this.format,
           this.classNameColumn,
@@ -123,7 +123,7 @@ public final class CSVMethodNameMappingParser extends AbstractCSVMappingParser<M
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
     public Builder withClassNameColumn(@Nullable String columnName) {
       super.withClassNameColumn(columnName);
@@ -133,9 +133,9 @@ public final class CSVMethodNameMappingParser extends AbstractCSVMappingParser<M
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
-    public Builder withFormat(@Nonnull CSVFormat format) {
+    public Builder withFormat(@NonNull CSVFormat format) {
       super.withFormat(format);
       return this;
     }
@@ -150,7 +150,7 @@ public final class CSVMethodNameMappingParser extends AbstractCSVMappingParser<M
      * @param columnName a column index.
      * @return a reference to this builder.
      */
-    @Nonnull
+    @NonNull
     public Builder withSignatureColumn(@Nullable String columnName) {
       this.signatureColumn = columnName;
       return this;
@@ -169,8 +169,8 @@ public final class CSVMethodNameMappingParser extends AbstractCSVMappingParser<M
 
     private MethodNameMappingEntry(
         @Nullable String className,
-        @Nonnull String originalName,
-        @Nonnull String targetName,
+        @NonNull String originalName,
+        @NonNull String targetName,
         @Nullable String signature) {
       this.className = className;
       this.originalName = originalName;
@@ -178,12 +178,12 @@ public final class CSVMethodNameMappingParser extends AbstractCSVMappingParser<M
       this.signature = signature;
     }
 
-    @Nonnull
+    @NonNull
     public String getTargetName() {
       return this.targetName;
     }
 
-    @Nonnull
+    @NonNull
     public MethodNameMappingEntry invert() {
       return new MethodNameMappingEntry(
           this.className,
@@ -193,8 +193,8 @@ public final class CSVMethodNameMappingParser extends AbstractCSVMappingParser<M
       );
     }
 
-    public boolean matches(@Nonnull String className, @Nonnull String name,
-        @Nonnull String signature) {
+    public boolean matches(@NonNull String className, @NonNull String name,
+        @NonNull String signature) {
       if (this.className != null && !this.className.equals(className)) {
         return false;
       }

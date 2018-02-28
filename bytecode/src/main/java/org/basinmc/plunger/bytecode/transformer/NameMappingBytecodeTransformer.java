@@ -19,8 +19,8 @@ package org.basinmc.plunger.bytecode.transformer;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.nio.file.Path;
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.basinmc.plunger.mapping.NameMapping;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
@@ -40,7 +40,7 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
   private final NameMapping mapping;
   private final boolean createMissingParameters;
 
-  public NameMappingBytecodeTransformer(@Nonnull NameMapping mapping, boolean createMissingParameters) {
+  public NameMappingBytecodeTransformer(@NonNull NameMapping mapping, boolean createMissingParameters) {
     this.mapping = mapping;
     this.createMissingParameters = createMissingParameters;
   }

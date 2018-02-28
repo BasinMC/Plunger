@@ -36,7 +36,7 @@ import java.util.Map.Entry;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.basinmc.plunger.AbstractPlunger;
 import org.basinmc.plunger.Plunger;
 import org.basinmc.plunger.bytecode.transformer.BytecodeTransformer;
@@ -183,7 +183,7 @@ public final class BytecodePlunger extends AbstractPlunger {
    * @param target a relative path to the computed target file path.
    * @throws IOException when reading the source file or writing the target file fails.
    */
-  private void processClass(@NonNull Path file, @Nonnull Path source, @Nonnull Path target)
+  private void processClass(@NonNull Path file, @NonNull Path source, @NonNull Path target)
       throws IOException {
     logger.info("Processing class {} ...", file);
 
@@ -308,7 +308,7 @@ public final class BytecodePlunger extends AbstractPlunger {
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
     public Builder withParallelism() {
       super.withParallelism();
@@ -318,7 +318,7 @@ public final class BytecodePlunger extends AbstractPlunger {
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
     public Builder withParallelism(boolean value) {
       super.withParallelism(value);
@@ -338,7 +338,7 @@ public final class BytecodePlunger extends AbstractPlunger {
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
     public Builder withSourceRelocation(boolean value) {
       super.withSourceRelocation(value);
@@ -385,7 +385,7 @@ public final class BytecodePlunger extends AbstractPlunger {
 
     private String className;
 
-    private ClassNameExtractorVisitor(@Nonnull ClassVisitor classVisitor) {
+    private ClassNameExtractorVisitor(@NonNull ClassVisitor classVisitor) {
       super(Opcodes.ASM6, classVisitor);
     }
 

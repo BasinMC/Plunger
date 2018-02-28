@@ -34,7 +34,7 @@ import java.util.Map.Entry;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.basinmc.plunger.AbstractPlunger;
 import org.basinmc.plunger.Plunger;
 import org.basinmc.plunger.sourcecode.formatter.SourcecodeFormatter;
@@ -62,9 +62,9 @@ public final class SourcecodePlunger extends AbstractPlunger {
       @NonNull Predicate<Path> resourceVoter,
       boolean sourceRelocation,
       boolean parallelism,
-      @Nonnull SourcecodeFormatter formatter,
-      @Nonnull Charset charset,
-      @Nonnull List<SourcecodeTransformer> transformers) {
+      @NonNull SourcecodeFormatter formatter,
+      @NonNull Charset charset,
+      @NonNull List<SourcecodeTransformer> transformers) {
     super(source, target, classInclusionVoter, transformationVoter, resourceVoter,
         sourceRelocation, parallelism);
     this.formatter = formatter;
@@ -180,7 +180,7 @@ public final class SourcecodePlunger extends AbstractPlunger {
    * @param target a relative path to the computed target file path.
    * @throws IOException when reading the source file or writing the target file fails.
    */
-  private void processSourceFile(@Nonnull Path file, @Nonnull Path source, @Nonnull Path target)
+  private void processSourceFile(@NonNull Path file, @NonNull Path source, @NonNull Path target)
       throws IOException {
     logger.info("Processing class {} ...", file);
 
@@ -268,8 +268,8 @@ public final class SourcecodePlunger extends AbstractPlunger {
      * @param charset a charset.
      * @return a reference to this builder.
      */
-    @Nonnull
-    public Builder withCharset(@Nonnull Charset charset) {
+    @NonNull
+    public Builder withCharset(@NonNull Charset charset) {
       this.charset = charset;
       return this;
     }
@@ -291,8 +291,8 @@ public final class SourcecodePlunger extends AbstractPlunger {
      * @param formatter a custom formatter implementation.
      * @return a reference to this builder.
      */
-    @Nonnull
-    public Builder withFormatter(@Nonnull SourcecodeFormatter formatter) {
+    @NonNull
+    public Builder withFormatter(@NonNull SourcecodeFormatter formatter) {
       this.formatter = formatter;
       return this;
     }
@@ -300,7 +300,7 @@ public final class SourcecodePlunger extends AbstractPlunger {
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
     public Builder withParallelism() {
       super.withParallelism();
@@ -310,7 +310,7 @@ public final class SourcecodePlunger extends AbstractPlunger {
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
     public Builder withParallelism(boolean value) {
       super.withParallelism(value);
@@ -330,7 +330,7 @@ public final class SourcecodePlunger extends AbstractPlunger {
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
     public Builder withSourceRelocation(boolean value) {
       super.withSourceRelocation(value);
@@ -353,8 +353,8 @@ public final class SourcecodePlunger extends AbstractPlunger {
      * @param transformer a transformer.
      * @return a reference to this builder.
      */
-    @Nonnull
-    public Builder withTransformer(@Nonnull SourcecodeTransformer transformer) {
+    @NonNull
+    public Builder withTransformer(@NonNull SourcecodeTransformer transformer) {
       this.transformers.add(transformer);
       return this;
     }

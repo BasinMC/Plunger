@@ -19,7 +19,7 @@ package org.basinmc.plunger.sourcecode.transformer;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.nio.file.Path;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.basinmc.plunger.mapping.AccessFlag;
 import org.basinmc.plunger.mapping.AccessMapping;
 import org.basinmc.plunger.sourcecode.utility.ReferenceUtility;
@@ -48,7 +48,7 @@ public class AccessMappingSourcecodeTransformer extends AbstractCascadingSourcec
 
   private final AccessMapping mapping;
 
-  public AccessMappingSourcecodeTransformer(@Nonnull AccessMapping mapping) {
+  public AccessMappingSourcecodeTransformer(@NonNull AccessMapping mapping) {
     this.mapping = mapping;
   }
 
@@ -87,8 +87,8 @@ public class AccessMappingSourcecodeTransformer extends AbstractCascadingSourcec
    * {@inheritDoc}
    */
   @Override
-  protected void transformField(@Nonnull Path source, @Nonnull JavaSource<?> typeSource,
-      @Nonnull FieldSource<?> fieldSource) {
+  protected void transformField(@NonNull Path source, @NonNull JavaSource<?> typeSource,
+      @NonNull FieldSource<?> fieldSource) {
     AccessFlag flag = byVisibility(fieldSource.getVisibility());
 
     if (fieldSource.isFinal()) {
@@ -111,8 +111,8 @@ public class AccessMappingSourcecodeTransformer extends AbstractCascadingSourcec
    * {@inheritDoc}
    */
   @Override
-  protected void transformMethod(@Nonnull Path source, @Nonnull JavaSource<?> typeSource,
-      @Nonnull MethodSource<?> methodSource) {
+  protected void transformMethod(@NonNull Path source, @NonNull JavaSource<?> typeSource,
+      @NonNull MethodSource<?> methodSource) {
     AccessFlag flag = byVisibility(methodSource.getVisibility());
 
     if (methodSource.isFinal()) {
@@ -155,7 +155,7 @@ public class AccessMappingSourcecodeTransformer extends AbstractCascadingSourcec
    * {@inheritDoc}
    */
   @Override
-  protected void transformType(@Nonnull Path source, @Nonnull JavaSource<?> typeSource) {
+  protected void transformType(@NonNull Path source, @NonNull JavaSource<?> typeSource) {
     AccessFlag flag = byVisibility(typeSource.getVisibility());
 
     if (typeSource instanceof FinalCapableSource && ((FinalCapable) typeSource).isFinal()) {

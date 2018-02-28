@@ -19,7 +19,7 @@ package org.basinmc.plunger.bytecode.transformer;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.nio.file.Path;
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -34,7 +34,7 @@ public class OverrideLocalVariableBytecodeTransformer implements BytecodeTransfo
 
   private final String name;
 
-  public OverrideLocalVariableBytecodeTransformer(@Nonnull String name) {
+  public OverrideLocalVariableBytecodeTransformer(@NonNull String name) {
     this.name = name;
   }
 

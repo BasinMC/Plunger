@@ -23,8 +23,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.basinmc.plunger.mapping.FieldNameMapping;
@@ -42,10 +42,10 @@ public final class CSVFieldNameMappingParser extends AbstractCSVMappingParser<Fi
   private final String targetNameColumn;
 
   private CSVFieldNameMappingParser(
-      @Nonnull CSVFormat format,
+      @NonNull CSVFormat format,
       @Nullable String classNameColumn,
-      @Nonnull String originalNameColumn,
-      @Nonnull String targetNameColumn,
+      @NonNull String originalNameColumn,
+      @NonNull String targetNameColumn,
       @Nullable String signatureColumn) {
     super(format);
     this.classNameColumn = classNameColumn;
@@ -59,7 +59,7 @@ public final class CSVFieldNameMappingParser extends AbstractCSVMappingParser<Fi
    *
    * @return an empty factory.
    */
-  @Nonnull
+  @NonNull
   public static Builder builder() {
     return new Builder();
   }
@@ -68,7 +68,7 @@ public final class CSVFieldNameMappingParser extends AbstractCSVMappingParser<Fi
    * {@inheritDoc}
    */
   @Override
-  protected FieldNameMapping doParse(@Nonnull CSVParser parser) throws IOException {
+  protected FieldNameMapping doParse(@NonNull CSVParser parser) throws IOException {
     FieldNameMappingImpl mapping = new FieldNameMappingImpl();
 
     parser.getRecords().forEach((r) -> {
@@ -107,10 +107,10 @@ public final class CSVFieldNameMappingParser extends AbstractCSVMappingParser<Fi
      * @param originalNameColumn the name of the column in which the original field name is stored.
      * @param targetNameColumn the name of the column in which the target field name is stored.
      */
-    @Nonnull
+    @NonNull
     public CSVFieldNameMappingParser build(
-        @Nonnull String originalNameColumn,
-        @Nonnull String targetNameColumn) {
+        @NonNull String originalNameColumn,
+        @NonNull String targetNameColumn) {
       return new CSVFieldNameMappingParser(
           this.format,
           this.classNameColumn,
@@ -123,7 +123,7 @@ public final class CSVFieldNameMappingParser extends AbstractCSVMappingParser<Fi
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
     public Builder withClassNameColumn(@Nullable String columnName) {
       super.withClassNameColumn(columnName);
@@ -133,9 +133,9 @@ public final class CSVFieldNameMappingParser extends AbstractCSVMappingParser<Fi
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
-    public Builder withFormat(@Nonnull CSVFormat format) {
+    public Builder withFormat(@NonNull CSVFormat format) {
       super.withFormat(format);
       return this;
     }
@@ -150,7 +150,7 @@ public final class CSVFieldNameMappingParser extends AbstractCSVMappingParser<Fi
      * @param columnName a column name.
      * @return a reference to this builder.
      */
-    @Nonnull
+    @NonNull
     public Builder withSignatureColumn(@Nullable String columnName) {
       this.signatureColumn = columnName;
       return this;
@@ -169,8 +169,8 @@ public final class CSVFieldNameMappingParser extends AbstractCSVMappingParser<Fi
 
     private FieldNameMappingEntry(
         @Nullable String className,
-        @Nonnull String originalName,
-        @Nonnull String targetName,
+        @NonNull String originalName,
+        @NonNull String targetName,
         @Nullable String signature) {
       this.className = className;
       this.originalName = originalName;
@@ -196,7 +196,7 @@ public final class CSVFieldNameMappingParser extends AbstractCSVMappingParser<Fi
           Objects.equals(this.signature, that.signature);
     }
 
-    @Nonnull
+    @NonNull
     public String getTargetName() {
       return this.targetName;
     }
@@ -209,7 +209,7 @@ public final class CSVFieldNameMappingParser extends AbstractCSVMappingParser<Fi
       return Objects.hash(this.className, this.originalName, this.targetName, this.signature);
     }
 
-    @Nonnull
+    @NonNull
     public FieldNameMappingEntry invert() {
       return new FieldNameMappingEntry(
           this.className,
@@ -219,8 +219,8 @@ public final class CSVFieldNameMappingParser extends AbstractCSVMappingParser<Fi
       );
     }
 
-    public boolean matches(@Nonnull String className, @Nonnull String name,
-        @Nonnull String signature) {
+    public boolean matches(@NonNull String className, @NonNull String name,
+        @NonNull String signature) {
       if (this.className != null && !this.className.equals(className)) {
         return false;
       }

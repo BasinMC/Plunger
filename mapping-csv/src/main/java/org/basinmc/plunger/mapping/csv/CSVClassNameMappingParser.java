@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.basinmc.plunger.mapping.ClassNameMapping;
@@ -39,9 +39,9 @@ public final class CSVClassNameMappingParser extends AbstractCSVMappingParser<Cl
   private final String targetNameColumn;
 
   private CSVClassNameMappingParser(
-      @Nonnull CSVFormat format,
-      @Nonnull String originalNameColumn,
-      @Nonnull String targetNameColumn) {
+      @NonNull CSVFormat format,
+      @NonNull String originalNameColumn,
+      @NonNull String targetNameColumn) {
     super(format);
     this.originalNameColumn = originalNameColumn;
     this.targetNameColumn = targetNameColumn;
@@ -52,7 +52,7 @@ public final class CSVClassNameMappingParser extends AbstractCSVMappingParser<Cl
    *
    * @return an empty factory.
    */
-  @Nonnull
+  @NonNull
   public static Builder builder() {
     return new Builder();
   }
@@ -61,7 +61,7 @@ public final class CSVClassNameMappingParser extends AbstractCSVMappingParser<Cl
    * {@inheritDoc}
    */
   @Override
-  protected ClassNameMapping doParse(@Nonnull CSVParser parser) throws IOException {
+  protected ClassNameMapping doParse(@NonNull CSVParser parser) throws IOException {
     ClassNameMappingImpl mapping = new ClassNameMappingImpl();
 
     parser.getRecords().forEach(
@@ -85,19 +85,19 @@ public final class CSVClassNameMappingParser extends AbstractCSVMappingParser<Cl
      * @param originalNameColumn the name of the column in which the original class name is stored.
      * @param targetNameColumn the name of the column in which the target class name is stored.
      */
-    @Nonnull
+    @NonNull
     public CSVClassNameMappingParser build(
-        @Nonnull String originalNameColumn,
-        @Nonnull String targetNameColumn) {
+        @NonNull String originalNameColumn,
+        @NonNull String targetNameColumn) {
       return new CSVClassNameMappingParser(this.format, originalNameColumn, targetNameColumn);
     }
 
     /**
      * {@inheritDoc}
      */
-    @Nonnull
+    @NonNull
     @Override
-    public Builder withFormat(@Nonnull CSVFormat format) {
+    public Builder withFormat(@NonNull CSVFormat format) {
       super.withFormat(format);
       return this;
     }

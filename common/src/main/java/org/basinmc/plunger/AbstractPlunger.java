@@ -23,7 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,7 +138,7 @@ public abstract class AbstractPlunger implements Plunger {
    * @param target a relative path to the computed target file path.
    * @throws IOException when reading or writing the source file or writing the target file fails.
    */
-  protected void processResource(@NonNull Path file, @Nonnull Path source, @Nonnull Path target)
+  protected void processResource(@NonNull Path file, @NonNull Path source, @NonNull Path target)
       throws IOException {
     this.logger.info("Processing resource {} ...", file);
 
