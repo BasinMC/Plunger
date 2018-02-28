@@ -17,6 +17,7 @@
 package org.basinmc.plunger.mapping;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -144,6 +145,32 @@ public class DelegatingNameMapping implements NameMapping {
 
     return Optional.of(result)
         .filter((r) -> !methodName.equals(r));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @NonNull
+  @Override
+  public Optional<String> getParameterName(@NonNull String className, @NonNull String methodName,
+      @NonNull String signature, @Nullable String parameterName, int parameterIndex) {
+    String result = parameterName;
+
+    if (this.resolveEnclosure) {
+      methodName = this.getMethodName(className, methodName, signature)
+          .orElse(methodName);
+
+      className = this.getClassName(className)
+          .orElse(className);
+    }
+
+    for (ParameterNameMapping mapping : this.parameterNameMappings) {
+      result = mapping.getParameterName(className, methodName, signature, result, parameterIndex)
+          .orElse(result);
+    }
+
+    return Optional.ofNullable(result)
+        .filter((r) -> !Objects.equals(parameterName, r));
   }
 
   /**
