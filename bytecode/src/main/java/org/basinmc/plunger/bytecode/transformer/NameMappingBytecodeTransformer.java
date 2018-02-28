@@ -56,7 +56,7 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
 
   /**
    * Provides a remapper implementation which delegates all of its queries to one or more {@link
-   * org.basinmc.plunger.common.mapping} interfaces.
+   * org.basinmc.plunger.mapping} interfaces.
    */
   private class DelegatingMapper extends Remapper {
 
