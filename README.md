@@ -30,21 +30,29 @@ Features
 Usage
 -----
 
-**Artifact Coordinates:** `org.basinmc:plunger:1.0-SNAPSHOT`
+**Artifact Coordinates:** `org.basinmc:plunger:2.0`
 
 ```xml
-<repository>
-  <id>basin-bintray</id>
-  <name>Basin Releases</name>
-  <url>https://dl.bintray.com/basin/maven/</url>
-</repository>
+<dependency>
+  <groupId>org.basinmc</groupId>
+  <artifactId>plunger</artifactId>
+  <version>2.0</version>
+</dependency>
 
-<!-- ... -->
+<!-- For unstable releases: -->
+<repository>
+  <id>ossrh</id>
+  <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+  
+  <snapshots>
+    <enabled>true</enabled>
+  </snapshots>
+</repository>
 
 <dependency>
   <groupId>org.basinmc</groupId>
   <artifactId>plunger</artifactId>
-  <version>1.0</version>
+  <version>2.0-SNAPSHOT</version>
 </dependency>
 ```
 
