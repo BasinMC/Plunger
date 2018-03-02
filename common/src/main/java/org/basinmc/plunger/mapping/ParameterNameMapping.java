@@ -46,7 +46,7 @@ public interface ParameterNameMapping {
    */
   @NonNull
   Optional<String> getParameterName(@NonNull String className, @NonNull String methodName,
-      @NonNull String signature, @Nullable String parameterName, int parameterIndex);
+      @NonNull String signature, @NonNull String parameterName, int parameterIndex);
 
   /**
    * <p>Retrieves an inverse version of the mapping.</p>

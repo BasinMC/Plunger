@@ -17,13 +17,11 @@
 package org.basinmc.plunger.mapping;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * <p>Provides a name mapping implementation which delegates its lookups to an arbitrary set of
@@ -153,7 +151,7 @@ public class DelegatingNameMapping implements NameMapping {
   @NonNull
   @Override
   public Optional<String> getParameterName(@NonNull String className, @NonNull String methodName,
-      @NonNull String signature, @Nullable String parameterName, int parameterIndex) {
+      @NonNull String signature, @NonNull String parameterName, int parameterIndex) {
     String result = parameterName;
 
     if (this.resolveEnclosure) {
@@ -169,7 +167,7 @@ public class DelegatingNameMapping implements NameMapping {
           .orElse(result);
     }
 
-    return Optional.ofNullable(result)
+    return Optional.of(result)
         .filter((r) -> !Objects.equals(parameterName, r));
   }
 
