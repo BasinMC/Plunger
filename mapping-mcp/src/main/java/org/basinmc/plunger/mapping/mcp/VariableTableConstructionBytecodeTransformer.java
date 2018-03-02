@@ -63,7 +63,7 @@ public class VariableTableConstructionBytecodeTransformer implements BytecodeTra
     }
   }
 
-  private static class VariableTableConstructionMethodVisitor extends MethodVisitor {
+  private static final class VariableTableConstructionMethodVisitor extends MethodVisitor {
 
     private VariableTableConstructionMethodVisitor(@NonNull MethodVisitor methodVisitor) {
       super(Opcodes.ASM6, methodVisitor);
