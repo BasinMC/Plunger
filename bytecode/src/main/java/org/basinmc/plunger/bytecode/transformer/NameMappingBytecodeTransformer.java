@@ -17,15 +17,16 @@
 package org.basinmc.plunger.bytecode.transformer;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.nio.file.Path;
 import java.util.Optional;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import org.basinmc.plunger.mapping.NameMapping;
 import org.objectweb.asm.ClassVisitor;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
-import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.commons.ClassRemapper;
+import org.objectweb.asm.commons.MethodRemapper;
 import org.objectweb.asm.commons.Remapper;
 
 /**
@@ -37,11 +38,9 @@ import org.objectweb.asm.commons.Remapper;
 public class NameMappingBytecodeTransformer implements BytecodeTransformer {
 
   private final NameMapping mapping;
-  private final boolean overrideParameters;
 
   public NameMappingBytecodeTransformer(@NonNull NameMapping mapping, boolean overrideParameters) {
     this.mapping = mapping;
-    this.overrideParameters = overrideParameters;
   }
 
   public NameMappingBytecodeTransformer(@NonNull NameMapping mapping) {
@@ -56,8 +55,7 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
       @NonNull ClassVisitor nextVisitor) {
     // since we don't know whether a class contains references to a type we're mapping until we've
     // visited it, we'll have to transform all classes
-    return Optional
-        .of(new ClassRemapper(new ParameterNameClassVisitor(nextVisitor), new DelegatingMapper()));
+    return Optional.of(new ExtendedClassRemapper(nextVisitor, new DelegatingMapper()));
   }
 
   /**
@@ -101,99 +99,96 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
   }
 
   /**
-   * Provides a class visitor which will remap the names of parameters.
+   * Provides an extended implementation of {@link ClassRemapper} which also correctly alters the
+   * names of inner class names.
    */
-  private final class ParameterNameClassVisitor extends ClassVisitor {
+  private final class ExtendedClassRemapper extends ClassRemapper {
 
-    private String className;
-
-    private ParameterNameClassVisitor(@NonNull ClassVisitor classVisitor) {
-      super(Opcodes.ASM6, classVisitor);
-    }
-
-    @Override
-    public void visit(int version, int access, @NonNull String name, String signature,
-        String superName,
-        String[] interfaces) {
-      this.className = name;
-      super.visit(version, access, name, signature, superName, interfaces);
+    private ExtendedClassRemapper(@NonNull ClassVisitor cv, @NonNull Remapper remapper) {
+      super(cv, remapper);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public MethodVisitor visitMethod(int access, @NonNull String name, @NonNull String descriptor,
-        @Nullable String signature, @Nullable String[] exceptions) {
-      MethodVisitor visitor = super.visitMethod(access, name, descriptor, descriptor, exceptions);
+    public void visitInnerClass(String name, String outerName, String innerName, int access) {
+      String target = this.remapper.mapType(name);
+      int separatorIndex = target.lastIndexOf('$');
 
-      if (visitor == null) {
-        return null;
+      if (separatorIndex != -1) {
+        innerName = target.substring(separatorIndex + 1);
       }
 
-      visitor = new ParameterNameMethodVisitor(visitor, this.className, name, descriptor);
-
-      if (NameMappingBytecodeTransformer.this.overrideParameters) {
-        Type[] arguments = Type.getArgumentTypes(descriptor);
-        int i = 0;
-
-        for (Type argument : arguments) {
-          visitor.visitParameter("param" + (i++), 0);
-        }
-
-        return new ParameterConsumerMethodVisitor(visitor);
-      }
-
-      return visitor;
-    }
-  }
-
-  private static final class ParameterConsumerMethodVisitor extends MethodVisitor {
-
-    private ParameterConsumerMethodVisitor(@NonNull MethodVisitor methodVisitor) {
-      super(Opcodes.ASM6, methodVisitor);
+      super.visitInnerClass(
+          name,
+          outerName,
+          innerName,
+          access
+      );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void visitParameter(String name, int access) {
+    public MethodVisitor visitMethod(int access, String name, String desc, String signature,
+        String[] exceptions) {
+      return this.createMethodRemapper(
+          super.visitMethod(access, name, desc, signature, exceptions),
+          name,
+          desc
+      );
+    }
+
+    @NonNull
+    protected MethodVisitor createMethodRemapper(@Nullable MethodVisitor mv, String methodName,
+        String methodDescriptor) {
+      return new ExtendedMethodRemapper(
+          this.createMethodRemapper(mv),
+          this.remapper,
+          this.className,
+          methodName,
+          methodDescriptor
+      );
     }
   }
 
-  /**
-   * Provides a method visitor which will remap the names of parameters.
-   */
-  private final class ParameterNameMethodVisitor extends MethodVisitor {
+  private final class ExtendedMethodRemapper extends MethodRemapper {
 
     private final String className;
-    private final String descriptor;
     private final String methodName;
-    private int parameterIndex;
+    private final String descriptor;
 
-    private ParameterNameMethodVisitor(
-        @NonNull MethodVisitor methodVisitor,
+    private final Type[] parameters;
+
+    private ExtendedMethodRemapper(
+        @NonNull MethodVisitor mv,
+        @NonNull Remapper remapper,
         @NonNull String className,
         @NonNull String methodName,
         @NonNull String descriptor) {
-      super(Opcodes.ASM6, methodVisitor);
+      super(mv, remapper);
       this.className = className;
       this.methodName = methodName;
       this.descriptor = descriptor;
+
+      this.parameters = Type.getArgumentTypes(descriptor);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void visitParameter(@Nullable String name, int access) {
-      // TODO: Evaluate whether name is actually passed as null when LVT is missing
-      name = NameMappingBytecodeTransformer.this.mapping
-          .getParameterName(this.className, this.methodName, this.descriptor, name,
-              this.parameterIndex++).orElse(name);
+    public void visitLocalVariable(String name, String desc, String signature, Label start,
+        Label end, int index) {
+      if (index > 0 && index <= this.parameters.length) {
+        name = NameMappingBytecodeTransformer.this.mapping
+            .getParameterName(this.className, this.methodName, this.descriptor, name, index - 1)
+            .orElse(name);
+      }
 
-      super.visitParameter(name, access);
+      super.visitLocalVariable(name, desc, signature, start, end, index);
     }
   }
 }
