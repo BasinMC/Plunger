@@ -25,11 +25,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:johannesd@torchmind.com">Johannes Donath</a>
@@ -37,10 +40,19 @@ import java.util.Set;
 public final class InnerClassMapping {
 
   private final Map<String, MappingEntry> mappings;
+  private final Map<String, InnerClass> innerClasses;
 
   @JsonCreator
   private InnerClassMapping(@NonNull Map<String, MappingEntry> mappings) {
     this.mappings = mappings;
+
+    this.innerClasses = mappings.entrySet().stream()
+        .filter((e) -> e.getKey().contains("$"))
+        .filter((e) -> !e.getValue().getInnerClasses().isEmpty())
+        .flatMap((e) -> e.getValue().getInnerClasses().stream()
+            .map((cl) -> new SimpleImmutableEntry<>(e.getKey(), cl)))
+        .filter((e) -> e.getKey().equals(e.getValue().getInnerName()))
+        .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
   }
 
   /**
@@ -79,6 +91,17 @@ public final class InnerClassMapping {
   @NonNull
   public Optional<MappingEntry> getMapping(@NonNull String className) {
     return Optional.ofNullable(this.mappings.get(className));
+  }
+
+  /**
+   * Retrieves the declaration of an inner class based on its name.
+   *
+   * @param className a class name.
+   * @return an inner class or an empty optional.
+   */
+  @NonNull
+  public Optional<InnerClass> getInnerClass(@NonNull String className) {
+    return Optional.ofNullable(this.innerClasses.get(className));
   }
 
   /**
@@ -152,12 +175,12 @@ public final class InnerClassMapping {
 
     @JsonCreator
     public InnerClass(
-        @JsonProperty("access") int access,
+        @JsonProperty("access") String access,
         @NonNull @JsonProperty(value = "inner_class", required = true) String innerClass,
         @Nullable @JsonProperty("inner_name") String innerName,
         @Nullable @JsonProperty("outer_class") String outerClass,
         @JsonProperty("start") long start) {
-      this.access = access;
+      this.access = access == null ? 0 : Integer.parseInt(access, 16);
       this.innerClass = innerClass;
       this.innerName = innerName;
       this.outerClass = outerClass;
