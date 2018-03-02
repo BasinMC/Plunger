@@ -70,7 +70,7 @@ Plunger plunger = BytecodePlunger.builder()
 
 // or
 
-Plunger plunger = Plunger.sourceBuilder()
+Plunger plunger = SourcecodePlunger.builder()
   .withTransformer(new AccessMappingSourcecodeTransformer(mapping))
   .build(source, target);
 
