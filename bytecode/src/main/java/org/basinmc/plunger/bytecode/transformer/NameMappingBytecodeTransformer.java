@@ -121,6 +121,23 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
       );
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void visitInnerClass(String name, String outerName, String innerName, int access) {
+      if (innerName != null) {
+        String tmp = this.remapper.mapType(name);
+        int innerSeparator = tmp.lastIndexOf('$');
+
+        if (innerSeparator != -1) {
+          innerName = tmp.substring(innerSeparator + 1);
+        }
+      }
+
+      super.visitInnerClass(name, outerName, innerName, access);
+    }
+
     @NonNull
     protected MethodVisitor createMethodRemapper(@Nullable MethodVisitor mv, String methodName,
         String methodDescriptor) {
