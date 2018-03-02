@@ -15,19 +15,36 @@ jobs:
           keys:
           - v1-dependencies-{{ checksum "pom.xml" }}
           - v1-dependencies-
-      - run: mvn dependency:go-offline
+      - run: mvn clean install
+      - store_test_results:
+          path: bytecode/target/surefire-reports
+      - store_test_results:
+          path: common/target/surefire-reports
+      - store_test_results:
+          path: mapping-csv/target/surefire-reports
+      - store_test_results:
+          path: sourcecode/target/surefire-reports
       - save_cache:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
-      - run: mvn clean package
-      - store_test_results:
-          path: target/surefire-reports
       - run: |
-          mkdir /tmp/artifacts/
-          cp target/org.basinmc.plunger-*.jar /tmp/artifacts/
-          cp -r target/apidocs/ /tmp/artifacts/
-          cp -r target/surefire-reports/ /tmp/artifacts/
+          mkdir -p /tmp/artifacts/bytecode
+          cp bytecode/target/org.basinmc.plunger.bytecode-*.jar /tmp/artifacts/bytecode/
+          cp -r bytecode/target/apidocs/ /tmp/artifacts/bytecode/
+          cp -r bytecode/target/surefire-reports/ /tmp/artifacts/bytecode/
+          mkdir -p /tmp/artifacts/common
+          cp common/target/org.basinmc.plunger.common-*.jar /tmp/artifacts/common/
+          cp -r common/target/apidocs/ /tmp/artifacts/common/
+          cp -r common/target/surefire-reports/ /tmp/artifacts/common/
+          mkdir -p /tmp/artifacts/mapping-csv
+          cp mapping-csv/target/org.basinmc.plunger.mapping-csv-*.jar /tmp/artifacts/mapping-csv/
+          cp -r mapping-csv/target/apidocs/ /tmp/artifacts/mapping-csv/
+          cp -r mapping-csv/target/surefire-reports/ /tmp/artifacts/mapping-csv/
+          mkdir -p /tmp/artifacts/sourcecode
+          cp sourcecode/target/org.basinmc.plunger.sourcecode-*.jar /tmp/artifacts/sourcecode/
+          cp -r sourcecode/target/apidocs/ /tmp/artifacts/sourcecode/
+          cp -r sourcecode/target/surefire-reports/ /tmp/artifacts/sourcecode/
       - store_artifacts:
           path: /tmp/artifacts/
           destination: /

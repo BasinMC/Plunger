@@ -1,4 +1,5 @@
 [![License](https://img.shields.io/github/license/BasinMC/Plunger.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.txt)
+[![Maven Central](https://img.shields.io/maven-central/v/org.basinmc.plunger/common.svg?style=flat-square)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%20org.basinmc.plunger)
 [![GitHub Release](https://img.shields.io/github/release/BasinMC/Plunger.svg?style=flat-square)](https://github.com/BasinMC/Plunger/releases)
 [![CircleCI](https://img.shields.io/circleci/project/github/BasinMC/Plunger.svg?style=flat-square)](https://circleci.com/gh/BasinMC/Plunger)
 
@@ -29,21 +30,29 @@ Features
 Usage
 -----
 
-**Artifact Coordinates:** `org.basinmc:plunger:1.0-SNAPSHOT`
+**Artifact Coordinates:** `org.basinmc:plunger:2.0`
 
 ```xml
-<repository>
-  <id>basin-bintray</id>
-  <name>Basin Releases</name>
-  <url>https://dl.bintray.com/basin/maven/</url>
-</repository>
+<dependency>
+  <groupId>org.basinmc</groupId>
+  <artifactId>plunger</artifactId>
+  <version>2.0</version>
+</dependency>
 
-<!-- ... -->
+<!-- For unstable releases: -->
+<repository>
+  <id>ossrh</id>
+  <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+  
+  <snapshots>
+    <enabled>true</enabled>
+  </snapshots>
+</repository>
 
 <dependency>
   <groupId>org.basinmc</groupId>
   <artifactId>plunger</artifactId>
-  <version>1.0</version>
+  <version>2.0-SNAPSHOT</version>
 </dependency>
 ```
 
@@ -55,7 +64,7 @@ Path source = ...;
 Path target = ...;
 AccessMapping mapping = ...;
 
-Plunger plunger = Plunger.bytecodeBuilder()
+Plunger plunger = BytecodePlunger.builder()
   .withTransformer(new AccessMappingBytecodeTransformer(mapping))
   .build(source, target);
 
