@@ -89,7 +89,7 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
     public String mapMethodName(String owner, String name, String desc) {
       // since we cannot actually map the names of constructors, we'll simply skip them entirely
       // here to prevent any issues due to badly designed mapping implementations
-      if ("<init>".equals(name)) {
+      if ("<init>".equals(name) || "<clinit>".equals(name)) {
         return name;
       }
 
