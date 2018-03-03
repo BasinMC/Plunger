@@ -87,7 +87,7 @@ Building
 --------
 
 1. Clone this repository via ```git clone https://github.com/BasinMC/Plunger.git``` or download a [zip](https://github.com/BasinMC/Plunger/archive/master.zip)
-2. Build the modification by running ```mvn clean install```
+2. Build the library by running ```mvn clean install```
 3. The resulting jars can be found in their respective ```target``` directories as well as your local maven repository
 
 Contact
