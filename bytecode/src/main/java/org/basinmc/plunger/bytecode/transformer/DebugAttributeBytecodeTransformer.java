@@ -19,7 +19,6 @@ package org.basinmc.plunger.bytecode.transformer;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.nio.file.Path;
 import java.util.Optional;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.objectweb.asm.Attribute;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
@@ -55,7 +54,7 @@ public class DebugAttributeBytecodeTransformer implements BytecodeTransformer {
    * {@inheritDoc}
    */
   @Override
-  public Optional<ClassVisitor> createTransformer(@NonNull Path source,
+  public Optional<ClassVisitor> createTransformer(@NonNull Context context, @NonNull Path source,
       @NonNull ClassVisitor nextVisitor) {
     return Optional.of(new DebugClassAttributeVisitor(nextVisitor));
   }

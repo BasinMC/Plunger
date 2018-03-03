@@ -17,6 +17,7 @@
 package org.basinmc.plunger.bytecode;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -29,21 +30,31 @@ import java.nio.file.PathMatcher;
 import java.nio.file.StandardOpenOption;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.collections4.map.MultiKeyMap;
 import org.basinmc.plunger.AbstractPlunger;
 import org.basinmc.plunger.Plunger;
 import org.basinmc.plunger.bytecode.transformer.BytecodeTransformer;
+import org.basinmc.plunger.bytecode.transformer.BytecodeTransformer.ClassMetadata;
+import org.basinmc.plunger.bytecode.transformer.BytecodeTransformer.Context;
 import org.basinmc.plunger.bytecode.transformer.DelegatingClassVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,16 +105,22 @@ public final class BytecodePlunger extends AbstractPlunger {
    */
   @Override
   public void apply() throws IOException {
+    ClassMetadata classMetadata = null;
+
+    if (this.transformers.stream().anyMatch(BytecodeTransformer::usesClassMetadata)) {
+      logger.info("Generating inheritance information ...");
+      classMetadata = this.generateClassMetadata();
+      logger.info("  SUCCESS");
+    } else {
+      logger.info("Inheritance information has not been collected");
+    }
+
     logger.info("Applying transformations ...");
+    Context context = new ContextImpl(classMetadata);
 
     Files.createDirectories(this.target);
-    Stream<Path> stream;
-
-    if (this.parallelism) {
-      stream = Files.walk(this.source).parallel();
-    } else {
-      stream = Files.walk(this.source);
-    }
+    Stream<Path> stream =
+        this.parallelism ? Files.walk(this.source).parallel() : Files.walk(this.source);
 
     Map<Path, IOException> failedExecutions = stream
         .flatMap((file) -> {
@@ -119,7 +136,7 @@ public final class BytecodePlunger extends AbstractPlunger {
             Files.createDirectories(target.getParent());
 
             if (this.bytecodeMatcher.matches(file)) {
-              this.processClass(file, source, target);
+              this.processClass(context, file, source, target);
             } else {
               this.processResource(file, source, target);
             }
@@ -165,6 +182,32 @@ public final class BytecodePlunger extends AbstractPlunger {
   }
 
   /**
+   * Generates an inheritance map for the input classes within the source directory (including those
+   * which would otherwise be excluded from the process).
+   *
+   * @return an inheritance map.
+   * @throws IOException when reading from the input directory fails.
+   */
+  @NonNull
+  private ClassMetadata generateClassMetadata() throws IOException {
+    ClassMetadataImpl classMetadata = new ClassMetadataImpl();
+
+    Iterator<Path> it = Files.walk(this.source)
+        .filter(this.bytecodeMatcher::matches)
+        .iterator();
+
+    while (it.hasNext()) {
+      try (InputStream inputStream = Files.newInputStream(it.next())) {
+        ClassReader reader = new ClassReader(inputStream);
+        reader.accept(new ClassMetadataGeneratorClassVisitor(classMetadata),
+            ClassReader.SKIP_DEBUG ^ ClassReader.SKIP_CODE ^ ClassReader.SKIP_FRAMES);
+      }
+    }
+
+    return classMetadata;
+  }
+
+  /**
    * Retrieves a list of configured transformers within this Plunger instance.
    *
    * @return a list of transformers.
@@ -183,7 +226,8 @@ public final class BytecodePlunger extends AbstractPlunger {
    * @param target a relative path to the computed target file path.
    * @throws IOException when reading the source file or writing the target file fails.
    */
-  private void processClass(@NonNull Path file, @NonNull Path source, @NonNull Path target)
+  private void processClass(@NonNull Context context, @NonNull Path file, @NonNull Path source,
+      @NonNull Path target)
       throws IOException {
     logger.info("Processing class {} ...", file);
 
@@ -212,7 +256,7 @@ public final class BytecodePlunger extends AbstractPlunger {
 
       for (BytecodeTransformer transformer : this.transformers) {
         nextVisitor = new DelegatingClassVisitor();
-        ClassVisitor visitor = transformer.createTransformer(source, nextVisitor)
+        ClassVisitor visitor = transformer.createTransformer(context, source, nextVisitor)
             .orElse(null);
 
         if (visitor != null) {
@@ -397,6 +441,171 @@ public final class BytecodePlunger extends AbstractPlunger {
         String[] interfaces) {
       super.visit(version, access, name, signature, superName, interfaces);
       this.className = name;
+    }
+  }
+
+  /**
+   * Generates a class metadata map from an existing class.
+   */
+  private static final class ClassMetadataGeneratorClassVisitor extends ClassVisitor {
+
+    private final ClassMetadataImpl classMetadata;
+    private String className;
+
+    private ClassMetadataGeneratorClassVisitor(ClassMetadataImpl classMetadata) {
+      super(Opcodes.ASM6);
+      this.classMetadata = classMetadata;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void visit(int version, int access, String name, String signature,
+        String superName, String[] interfaces) {
+      this.className = name;
+
+      this.classMetadata.accessFlags.put(name, access);
+      this.classMetadata.superTypes.put(name, superName);
+      this.classMetadata.interfaces.computeIfAbsent(name, (k) -> new HashSet<>())
+          .addAll(Arrays.asList(interfaces));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public FieldVisitor visitField(int access, String name, String descriptor,
+        String signature,
+        Object value) {
+      this.classMetadata.fieldAccessFlags.put(this.className, name, descriptor, access);
+      return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MethodVisitor visitMethod(int access, String name, String descriptor,
+        String signature,
+        String[] exceptions) {
+      this.classMetadata.methodAccessFlags.put(this.className, name, descriptor, access);
+      return null;
+    }
+  }
+
+  /**
+   * Provides contextual information to transformers.
+   */
+  private static final class ContextImpl implements Context {
+
+    private final ClassMetadata inheritanceMap;
+
+    private ContextImpl(@Nullable ClassMetadata inheritanceMap) {
+      this.inheritanceMap = inheritanceMap;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @NonNull
+    @Override
+    public ClassMetadata getClassMetadata() {
+      if (this.inheritanceMap == null) {
+        throw new IllegalStateException("Inheritance map was not generated");
+      }
+
+      return this.inheritanceMap;
+    }
+  }
+
+  /**
+   * Represents a cached version of the input's inheritance map.
+   */
+  private static final class ClassMetadataImpl implements ClassMetadata {
+
+    private final Map<String, Integer> accessFlags = new HashMap<>();
+    private final MultiKeyMap<String, Integer> fieldAccessFlags = new MultiKeyMap<>();
+    private final MultiKeyMap<String, Integer> methodAccessFlags = new MultiKeyMap<>();
+
+    private final Map<String, String> superTypes = new HashMap<>();
+    private final Map<String, Set<String>> interfaces = new HashMap<>();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getAccess(@NonNull String className) {
+      return this.accessFlags.getOrDefault(className, Opcodes.ACC_PUBLIC);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<Integer> getFieldAccess(@NonNull String owner, @NonNull String name,
+        @NonNull String desc) {
+      return Optional.ofNullable(this.fieldAccessFlags.get(owner, name, desc));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<Integer> getMethodAccess(@NonNull String owner, @NonNull String name,
+        @NonNull String desc) {
+      return Optional.ofNullable(this.methodAccessFlags.get(owner, name, desc));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @NonNull
+    @Override
+    public Set<String> getInterfaces(@NonNull String className) {
+      return this.interfaces.getOrDefault(className, Collections.emptySet());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @NonNull
+    @Override
+    public String getSuperClass(@NonNull String className) {
+      return this.superTypes.getOrDefault(className, "java/lang/Object");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @NonNull
+    @Override
+    public Stream<String> walkInheritanceTree(@NonNull String className) {
+      List<String> elements = new ArrayList<>();
+      elements.add(className);
+
+      for (String interfaceName : this.getInterfaces(className)) {
+        elements.addAll(this.walkInterfaces(interfaceName));
+      }
+
+      do {
+        className = this.getSuperClass(className);
+        elements.add(className);
+      } while (!"java/lang/Object".equals(className));
+
+      return elements.stream();
+    }
+
+    @NonNull
+    private List<String> walkInterfaces(@NonNull String className) {
+      List<String> elements = new ArrayList<>();
+      elements.add(className);
+
+      for (String interfaceName : this.getInterfaces(className)) {
+        elements.addAll(this.walkInterfaces(interfaceName));
+      }
+
+      return elements;
     }
   }
 }

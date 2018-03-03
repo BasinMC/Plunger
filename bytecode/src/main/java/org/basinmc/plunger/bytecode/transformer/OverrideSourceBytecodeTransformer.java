@@ -20,7 +20,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import java.nio.file.Path;
 import java.util.Optional;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -50,7 +49,7 @@ public class OverrideSourceBytecodeTransformer implements BytecodeTransformer {
    * {@inheritDoc}
    */
   @Override
-  public Optional<ClassVisitor> createTransformer(@NonNull Path source,
+  public Optional<ClassVisitor> createTransformer(@NonNull Context context, @NonNull Path source,
       @NonNull ClassVisitor nextVisitor) {
     return Optional.of(new OverridingClassVisitor(nextVisitor));
   }

@@ -30,13 +30,14 @@ Features
 Usage
 -----
 
-**Artifact Coordinates:** `org.basinmc:plunger:2.0`
+**Artifact Coordinates:** `org.basinmc:plunger:3.0`<br />
+**JavaDoc:** [Bytecode](https://www.javadoc.io/doc/org.basinmc.plunger/bytecode/2.0) | [Sourcecode](https://www.javadoc.io/doc/org.basinmc.plunger/sourcecode/2.0) | [Common](https://www.javadoc.io/doc/org.basinmc.plunger/common/2.0) | [CSV Mapping](https://www.javadoc.io/doc/org.basinmc.plunger/mapping-csv/2.0) | [MCP Mapping](https://www.javadoc.io/doc/org.basinmc.plunger/mapping-mcp/2.0)
 
 ```xml
 <dependency>
   <groupId>org.basinmc</groupId>
   <artifactId>plunger</artifactId>
-  <version>2.0</version>
+  <version>3.0</version>
 </dependency>
 
 <!-- For unstable releases: -->
@@ -86,7 +87,7 @@ Building
 --------
 
 1. Clone this repository via ```git clone https://github.com/BasinMC/Plunger.git``` or download a [zip](https://github.com/BasinMC/Plunger/archive/master.zip)
-2. Build the modification by running ```mvn clean install```
+2. Build the library by running ```mvn clean install```
 3. The resulting jars can be found in their respective ```target``` directories as well as your local maven repository
 
 Contact

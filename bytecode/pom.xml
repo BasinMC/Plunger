@@ -24,7 +24,7 @@
   <parent>
     <artifactId>parent</artifactId>
     <groupId>org.basinmc.plunger</groupId>
-    <version>2.0</version>
+    <version>3.0</version>
   </parent>
 
   <artifactId>bytecode</artifactId>
@@ -51,6 +51,10 @@
     </dependency>
 
     <!-- Common -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-collections4</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
