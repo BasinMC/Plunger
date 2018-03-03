@@ -50,14 +50,15 @@ public interface BytecodeTransformer {
       @NonNull ClassVisitor nextVisitor);
 
   /**
-   * <p>Evaluates whether this transformer relies on inheritance information.</p>
+   * <p>Evaluates whether this transformer relies on class metadata (such as inheritance
+   * trees).</p>
    *
-   * <p>When no transformer returns true within this method, the generation of inheritance
-   * generation will be skipped.</p>
+   * <p>When no transformer returns true within this method, the generation of class metadata will
+   * be skipped.</p>
    *
-   * @return true if inheritance information is used, false otherwise.
+   * @return true if class metadata is used, false otherwise.
    */
-  default boolean usesInheritanceInformation() {
+  default boolean usesClassMetadata() {
     return false;
   }
 
@@ -67,20 +68,29 @@ public interface BytecodeTransformer {
   interface Context {
 
     /**
-     * Retrieves a map which grants access to a class's inheritance tree.
+     * Retrieves a map of class metadata such as inheritance and current access levels.
      *
      * @return an inheritance map.
      * @throws IllegalStateException when no transformer declared that it wishes to use inheritance
      * information.
      */
     @NonNull
-    InheritanceMap getInheritanceMap();
+    ClassMetadata getClassMetadata();
   }
 
   /**
-   * Provides a map of inherited classes.
+   * Provides a map of class metadata such as inheritance or access levels.
    */
-  interface InheritanceMap {
+  interface ClassMetadata {
+
+    /**
+     * Retrieves the original access level for the specified class.
+     *
+     * @param className a class name.
+     * @return an access level (as defined by the {@link org.objectweb.asm.Opcodes} {@code ACC_}
+     * constants.
+     */
+    int getAccess(@NonNull String className);
 
     /**
      * Retrieves the set of interfaces the class with the specified name is directly inheriting
@@ -126,6 +136,6 @@ public interface BytecodeTransformer {
      * @return a stream of class names from which the specified class inherits members.
      */
     @NonNull
-    Stream<String> walk(@NonNull String className);
+    Stream<String> walkInheritanceTree(@NonNull String className);
   }
 }

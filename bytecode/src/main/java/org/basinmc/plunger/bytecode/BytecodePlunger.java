@@ -46,7 +46,7 @@ import org.basinmc.plunger.AbstractPlunger;
 import org.basinmc.plunger.Plunger;
 import org.basinmc.plunger.bytecode.transformer.BytecodeTransformer;
 import org.basinmc.plunger.bytecode.transformer.BytecodeTransformer.Context;
-import org.basinmc.plunger.bytecode.transformer.BytecodeTransformer.InheritanceMap;
+import org.basinmc.plunger.bytecode.transformer.BytecodeTransformer.ClassMetadata;
 import org.basinmc.plunger.bytecode.transformer.DelegatingClassVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
@@ -101,18 +101,18 @@ public final class BytecodePlunger extends AbstractPlunger {
    */
   @Override
   public void apply() throws IOException {
-    InheritanceMap inheritanceMap = null;
+    ClassMetadata classMetadata = null;
 
-    if (this.transformers.stream().anyMatch(BytecodeTransformer::usesInheritanceInformation)) {
+    if (this.transformers.stream().anyMatch(BytecodeTransformer::usesClassMetadata)) {
       logger.info("Generating inheritance information ...");
-      inheritanceMap = this.generateInheritanceMap();
+      classMetadata = this.generateClassMetadata();
       logger.info("  SUCCESS");
     } else {
       logger.info("Inheritance information has not been collected");
     }
 
     logger.info("Applying transformations ...");
-    Context context = new ContextImpl(inheritanceMap);
+    Context context = new ContextImpl(classMetadata);
 
     Files.createDirectories(this.target);
     Stream<Path> stream =
@@ -185,8 +185,8 @@ public final class BytecodePlunger extends AbstractPlunger {
    * @throws IOException when reading from the input directory fails.
    */
   @NonNull
-  private InheritanceMap generateInheritanceMap() throws IOException {
-    InheritanceMapImpl inheritanceMap = new InheritanceMapImpl();
+  private ClassMetadata generateClassMetadata() throws IOException {
+    ClassMetadataImpl classMetadata = new ClassMetadataImpl();
 
     Iterator<Path> it = Files.walk(this.source)
         .filter(this.bytecodeMatcher::matches)
@@ -199,15 +199,16 @@ public final class BytecodePlunger extends AbstractPlunger {
           @Override
           public void visit(int version, int access, String name, String signature,
               String superName, String[] interfaces) {
-            inheritanceMap.superTypes.put(name, superName);
-            inheritanceMap.interfaces.computeIfAbsent(name, (k) -> new HashSet<>())
+            classMetadata.accessFlags.put(name, access);
+            classMetadata.superTypes.put(name, superName);
+            classMetadata.interfaces.computeIfAbsent(name, (k) -> new HashSet<>())
                 .addAll(Arrays.asList(interfaces));
           }
         }, ClassReader.SKIP_DEBUG ^ ClassReader.SKIP_CODE ^ ClassReader.SKIP_FRAMES);
       }
     }
 
-    return inheritanceMap;
+    return classMetadata;
   }
 
   /**
@@ -452,9 +453,9 @@ public final class BytecodePlunger extends AbstractPlunger {
    */
   private static final class ContextImpl implements Context {
 
-    private final InheritanceMap inheritanceMap;
+    private final ClassMetadata inheritanceMap;
 
-    private ContextImpl(@Nullable InheritanceMap inheritanceMap) {
+    private ContextImpl(@Nullable ClassMetadata inheritanceMap) {
       this.inheritanceMap = inheritanceMap;
     }
 
@@ -463,7 +464,7 @@ public final class BytecodePlunger extends AbstractPlunger {
      */
     @NonNull
     @Override
-    public InheritanceMap getInheritanceMap() {
+    public ClassMetadata getClassMetadata() {
       if (this.inheritanceMap == null) {
         throw new IllegalStateException("Inheritance map was not generated");
       }
@@ -475,10 +476,19 @@ public final class BytecodePlunger extends AbstractPlunger {
   /**
    * Represents a cached version of the input's inheritance map.
    */
-  private static final class InheritanceMapImpl implements InheritanceMap {
+  private static final class ClassMetadataImpl implements ClassMetadata {
 
+    private final Map<String, Integer> accessFlags = new HashMap<>();
     private final Map<String, String> superTypes = new HashMap<>();
     private final Map<String, Set<String>> interfaces = new HashMap<>();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getAccess(@NonNull String className) {
+      return this.accessFlags.getOrDefault(className, Opcodes.ACC_PUBLIC);
+    }
 
     /**
      * {@inheritDoc}
@@ -503,7 +513,7 @@ public final class BytecodePlunger extends AbstractPlunger {
      */
     @NonNull
     @Override
-    public Stream<String> walk(@NonNull String className) {
+    public Stream<String> walkInheritanceTree(@NonNull String className) {
       List<String> elements = new ArrayList<>();
       elements.add(className);
 

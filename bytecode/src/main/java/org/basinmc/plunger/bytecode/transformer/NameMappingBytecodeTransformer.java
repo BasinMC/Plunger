@@ -57,14 +57,14 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
     // since we don't know whether a class contains references to a type we're mapping until we've
     // visited it, we'll have to transform all classes
     return Optional.of(new ExtendedClassRemapper(nextVisitor,
-        new DelegatingMapper(context.getInheritanceMap())));
+        new DelegatingMapper(context.getClassMetadata())));
   }
 
   /**
    * {@inheritDoc}
    */
   @Override
-  public boolean usesInheritanceInformation() {
+  public boolean usesClassMetadata() {
     return true;
   }
 
@@ -74,9 +74,9 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
    */
   private final class DelegatingMapper extends Remapper {
 
-    private final InheritanceMap inheritanceMap;
+    private final ClassMetadata inheritanceMap;
 
-    private DelegatingMapper(@NonNull InheritanceMap inheritanceMap) {
+    private DelegatingMapper(@NonNull ClassMetadata inheritanceMap) {
       this.inheritanceMap = inheritanceMap;
     }
 
@@ -94,7 +94,7 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
      */
     @Override
     public String mapFieldName(String owner, String name, String desc) {
-      return this.inheritanceMap.walk(owner)
+      return this.inheritanceMap.walkInheritanceTree(owner)
           .flatMap((o) -> NameMappingBytecodeTransformer.this.mapping.getFieldName(o, name, desc)
               .map(Stream::of)
               .orElseGet(Stream::empty))
@@ -113,7 +113,7 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
         return name;
       }
 
-      return this.inheritanceMap.walk(owner)
+      return this.inheritanceMap.walkInheritanceTree(owner)
           .flatMap((o) -> NameMappingBytecodeTransformer.this.mapping.getMethodName(o, name, desc)
               .map(Stream::of)
               .orElseGet(Stream::empty))
