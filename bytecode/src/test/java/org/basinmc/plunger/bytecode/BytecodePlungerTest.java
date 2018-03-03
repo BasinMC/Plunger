@@ -45,7 +45,7 @@ public class BytecodePlungerTest extends AbstractPlungerTest {
 
     BytecodeTransformer transformer = Mockito.mock(BytecodeTransformer.class);
     Mockito.when(transformer
-        .createTransformer(Mockito.eq(testFile), Mockito.any()))
+        .createTransformer(Mockito.notNull(), Mockito.eq(testFile), Mockito.any()))
         .thenReturn(Optional.empty());
 
     BytecodePlunger plunger = BytecodePlunger.builder()
@@ -55,7 +55,7 @@ public class BytecodePlungerTest extends AbstractPlungerTest {
     plunger.apply();
 
     Mockito.verify(transformer, Mockito.times(1))
-        .createTransformer(Mockito.eq(testFile), Mockito.any());
+        .createTransformer(Mockito.any(), Mockito.eq(testFile), Mockito.any());
 
     Assert.assertTrue(Files.exists(this.getTarget().resolve(testFile)));
 
