@@ -31,6 +31,7 @@ Usage
 -----
 
 **Artifact Coordinates:** `org.basinmc:plunger:2.0`
+**JavaDoc:** [Bytecode](https://www.javadoc.io/doc/org.basinmc.plunger/bytecode/2.0) | [Sourcecode](https://www.javadoc.io/doc/org.basinmc.plunger/sourcecode/2.0) | [Common](https://www.javadoc.io/doc/org.basinmc.plunger/common/2.0) | [CSV Mapping](https://www.javadoc.io/doc/org.basinmc.plunger/mapping-csv/2.0) | [MCP Mapping](https://www.javadoc.io/doc/org.basinmc.plunger/mapping-mcp/2.0)
 
 ```xml
 <dependency>
