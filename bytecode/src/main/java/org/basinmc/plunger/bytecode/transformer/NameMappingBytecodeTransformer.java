@@ -20,6 +20,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.basinmc.plunger.mapping.NameMapping;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.Label;
@@ -51,18 +52,33 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
    * {@inheritDoc}
    */
   @Override
-  public Optional<ClassVisitor> createTransformer(@NonNull Path source,
+  public Optional<ClassVisitor> createTransformer(@NonNull Context context, @NonNull Path source,
       @NonNull ClassVisitor nextVisitor) {
     // since we don't know whether a class contains references to a type we're mapping until we've
     // visited it, we'll have to transform all classes
-    return Optional.of(new ExtendedClassRemapper(nextVisitor, new DelegatingMapper()));
+    return Optional.of(new ExtendedClassRemapper(nextVisitor,
+        new DelegatingMapper(context.getInheritanceMap())));
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean usesInheritanceInformation() {
+    return true;
   }
 
   /**
    * Provides a remapper implementation which delegates all of its queries to one or more {@link
    * org.basinmc.plunger.mapping} interfaces.
    */
-  private class DelegatingMapper extends Remapper {
+  private final class DelegatingMapper extends Remapper {
+
+    private final InheritanceMap inheritanceMap;
+
+    private DelegatingMapper(@NonNull InheritanceMap inheritanceMap) {
+      this.inheritanceMap = inheritanceMap;
+    }
 
     /**
      * {@inheritDoc}
@@ -78,7 +94,11 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
      */
     @Override
     public String mapFieldName(String owner, String name, String desc) {
-      return NameMappingBytecodeTransformer.this.mapping.getFieldName(owner, name, desc)
+      return this.inheritanceMap.walk(owner)
+          .flatMap((o) -> NameMappingBytecodeTransformer.this.mapping.getFieldName(o, name, desc)
+              .map(Stream::of)
+              .orElseGet(Stream::empty))
+          .findAny()
           .orElse(name);
     }
 
@@ -93,7 +113,11 @@ public class NameMappingBytecodeTransformer implements BytecodeTransformer {
         return name;
       }
 
-      return NameMappingBytecodeTransformer.this.mapping.getMethodName(owner, name, desc)
+      return this.inheritanceMap.walk(owner)
+          .flatMap((o) -> NameMappingBytecodeTransformer.this.mapping.getMethodName(o, name, desc)
+              .map(Stream::of)
+              .orElseGet(Stream::empty))
+          .findAny()
           .orElse(name);
     }
   }
