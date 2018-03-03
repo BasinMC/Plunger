@@ -36,7 +36,7 @@ public class VariableTableConstructionBytecodeTransformer implements BytecodeTra
    * {@inheritDoc}
    */
   @Override
-  public Optional<ClassVisitor> createTransformer(@NonNull Path source,
+  public Optional<ClassVisitor> createTransformer(@NonNull Context context, @NonNull Path source,
       @NonNull ClassVisitor nextVisitor) {
     return Optional.of(new VariableTableConstructionClassVisitor(nextVisitor));
   }

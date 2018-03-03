@@ -19,7 +19,6 @@ package org.basinmc.plunger.bytecode.transformer;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import java.nio.file.Path;
 import java.util.Optional;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import org.basinmc.plunger.mapping.AccessFlag;
 import org.basinmc.plunger.mapping.AccessMapping;
 import org.objectweb.asm.ClassVisitor;
@@ -83,7 +82,7 @@ public class AccessMappingBytecodeTransformer implements BytecodeTransformer {
    */
   @NonNull
   @Override
-  public Optional<ClassVisitor> createTransformer(@NonNull Path source,
+  public Optional<ClassVisitor> createTransformer(@NonNull Context context, @NonNull Path source,
       @NonNull ClassVisitor nextVisitor) {
     return Optional.of(new AccessOverrideClassVisitor(nextVisitor));
   }
