@@ -88,9 +88,33 @@ public interface BytecodeTransformer {
      *
      * @param className a class name.
      * @return an access level (as defined by the {@link org.objectweb.asm.Opcodes} {@code ACC_}
-     * constants.
+     * constants).
      */
     int getAccess(@NonNull String className);
+
+    /**
+     * Retrieves the original access level for the specified field.
+     *
+     * @param owner a field owner (e.g. the enclosing class).
+     * @param name a field name.
+     * @param desc a field descriptor.
+     * @return an access level (as defined by the {@link org.objectweb.asm.Opcodes} {@code ACC_}
+     * constants).
+     */
+    Optional<Integer> getFieldAccess(@NonNull String owner, @NonNull String name,
+        @NonNull String desc);
+
+    /**
+     * Retrieves the original access level for the specified method.
+     *
+     * @param owner a field owner (e.g. the enclosing class).
+     * @param name a field name.
+     * @param desc a field descriptor.
+     * @return an access level (as defined by the {@link org.objectweb.asm.Opcodes} {@code ACC_}
+     * constants).
+     */
+    Optional<Integer> getMethodAccess(@NonNull String owner, @NonNull String name,
+        @NonNull String desc);
 
     /**
      * Retrieves the set of interfaces the class with the specified name is directly inheriting

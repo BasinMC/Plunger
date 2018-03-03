@@ -38,19 +38,23 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.apache.commons.collections4.map.MultiKeyMap;
 import org.basinmc.plunger.AbstractPlunger;
 import org.basinmc.plunger.Plunger;
 import org.basinmc.plunger.bytecode.transformer.BytecodeTransformer;
-import org.basinmc.plunger.bytecode.transformer.BytecodeTransformer.Context;
 import org.basinmc.plunger.bytecode.transformer.BytecodeTransformer.ClassMetadata;
+import org.basinmc.plunger.bytecode.transformer.BytecodeTransformer.Context;
 import org.basinmc.plunger.bytecode.transformer.DelegatingClassVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.FieldVisitor;
+import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -195,16 +199,8 @@ public final class BytecodePlunger extends AbstractPlunger {
     while (it.hasNext()) {
       try (InputStream inputStream = Files.newInputStream(it.next())) {
         ClassReader reader = new ClassReader(inputStream);
-        reader.accept(new ClassVisitor(Opcodes.ASM6) {
-          @Override
-          public void visit(int version, int access, String name, String signature,
-              String superName, String[] interfaces) {
-            classMetadata.accessFlags.put(name, access);
-            classMetadata.superTypes.put(name, superName);
-            classMetadata.interfaces.computeIfAbsent(name, (k) -> new HashSet<>())
-                .addAll(Arrays.asList(interfaces));
-          }
-        }, ClassReader.SKIP_DEBUG ^ ClassReader.SKIP_CODE ^ ClassReader.SKIP_FRAMES);
+        reader.accept(new ClassMetadataGeneratorClassVisitor(classMetadata),
+            ClassReader.SKIP_DEBUG ^ ClassReader.SKIP_CODE ^ ClassReader.SKIP_FRAMES);
       }
     }
 
@@ -449,6 +445,56 @@ public final class BytecodePlunger extends AbstractPlunger {
   }
 
   /**
+   * Generates a class metadata map from an existing class.
+   */
+  private static final class ClassMetadataGeneratorClassVisitor extends ClassVisitor {
+
+    private final ClassMetadataImpl classMetadata;
+    private String className;
+
+    private ClassMetadataGeneratorClassVisitor(ClassMetadataImpl classMetadata) {
+      super(Opcodes.ASM6);
+      this.classMetadata = classMetadata;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void visit(int version, int access, String name, String signature,
+        String superName, String[] interfaces) {
+      this.className = name;
+
+      this.classMetadata.accessFlags.put(name, access);
+      this.classMetadata.superTypes.put(name, superName);
+      this.classMetadata.interfaces.computeIfAbsent(name, (k) -> new HashSet<>())
+          .addAll(Arrays.asList(interfaces));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public FieldVisitor visitField(int access, String name, String descriptor,
+        String signature,
+        Object value) {
+      this.classMetadata.fieldAccessFlags.put(this.className, name, descriptor, access);
+      return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public MethodVisitor visitMethod(int access, String name, String descriptor,
+        String signature,
+        String[] exceptions) {
+      this.classMetadata.methodAccessFlags.put(this.className, name, descriptor, access);
+      return null;
+    }
+  }
+
+  /**
    * Provides contextual information to transformers.
    */
   private static final class ContextImpl implements Context {
@@ -479,6 +525,9 @@ public final class BytecodePlunger extends AbstractPlunger {
   private static final class ClassMetadataImpl implements ClassMetadata {
 
     private final Map<String, Integer> accessFlags = new HashMap<>();
+    private final MultiKeyMap<String, Integer> fieldAccessFlags = new MultiKeyMap<>();
+    private final MultiKeyMap<String, Integer> methodAccessFlags = new MultiKeyMap<>();
+
     private final Map<String, String> superTypes = new HashMap<>();
     private final Map<String, Set<String>> interfaces = new HashMap<>();
 
@@ -488,6 +537,24 @@ public final class BytecodePlunger extends AbstractPlunger {
     @Override
     public int getAccess(@NonNull String className) {
       return this.accessFlags.getOrDefault(className, Opcodes.ACC_PUBLIC);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<Integer> getFieldAccess(@NonNull String owner, @NonNull String name,
+        @NonNull String desc) {
+      return Optional.ofNullable(this.fieldAccessFlags.get(owner, name, desc));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<Integer> getMethodAccess(@NonNull String owner, @NonNull String name,
+        @NonNull String desc) {
+      return Optional.ofNullable(this.methodAccessFlags.get(owner, name, desc));
     }
 
     /**
